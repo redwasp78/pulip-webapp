@@ -23,7 +23,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool _isLoading = true;
   final bool _canGoBack = false;
   final bool _canGoForward = false;
-  String _currentUrl = 'https://www.google.com';
+  String _currentUrl = 'file:///android_asset/test.html';
   int _progress = 0;
   Timer? _loadingTimer;
 
