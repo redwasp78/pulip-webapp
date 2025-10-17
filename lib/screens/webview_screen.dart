@@ -211,7 +211,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
           // 로딩 오버레이
           if (_isLoading)
             Container(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: Colors.white.withOpacity(0.8),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

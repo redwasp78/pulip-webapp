@@ -50,7 +50,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   
-  # 앱 아이콘 및 스플래시 이미지
-  assets:
-    - assets/images/
-    - assets/icons/
+  # 앱 아이콘 및 스플래시 이미지 (임시 주석 처리)
+  # assets:
+  #   - assets/images/
+  #   - assets/icons/
