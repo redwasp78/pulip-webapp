@@ -9,7 +9,7 @@ plugins {
 android {
     namespace = "kr.pe.kk.pulip_webapp"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
