@@ -27,7 +27,8 @@ class FCMService {
       _setupForegroundMessageListener();
 
       // 백그라운드 메시지 핸들러 설정
-      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+      FirebaseMessaging.onBackgroundMessage(
+          _firebaseMessagingBackgroundHandler);
 
       // 알림 클릭 시 앱 열기 처리
       _handleNotificationTap();
@@ -64,7 +65,7 @@ class FCMService {
   static Future<void> _getFCMToken() async {
     try {
       _fcmToken = await _messaging.getToken();
-      
+
       // 토큰 갱신 리스너 설정
       _messaging.onTokenRefresh.listen((newToken) {
         _fcmToken = newToken;
@@ -82,7 +83,8 @@ class FCMService {
 
   /// 포그라운드 메시지 리스너 설정
   static void _setupForegroundMessageListener() {
-    _messageSubscription = FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    _messageSubscription =
+        FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (kDebugMode) {
         print('Received foreground message: ${message.messageId}');
         print('Title: ${message.notification?.title}');
@@ -112,7 +114,7 @@ class FCMService {
         print('Notification tapped: ${message.messageId}');
         print('Data: ${message.data}');
       }
-      
+
       // 알림 데이터에 따라 WebView URL 변경
       _handleNotificationNavigation(message.data);
     });
@@ -124,7 +126,7 @@ class FCMService {
           print('App opened from notification: ${message.messageId}');
           print('Data: ${message.data}');
         }
-        
+
         _handleNotificationNavigation(message.data);
       }
     });
@@ -148,7 +150,7 @@ class FCMService {
   /// 디바이스 정보 가져오기 (임시 주석 처리)
   static Future<Map<String, dynamic>> getDeviceInfo() async {
     // final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    
+
     if (Platform.isAndroid) {
       // final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       return {
@@ -166,7 +168,7 @@ class FCMService {
         'name': 'Unknown',
       };
     }
-    
+
     return {'platform': 'unknown'};
   }
 
@@ -182,7 +184,7 @@ class FCMService {
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // Firebase 초기화
   await Firebase.initializeApp();
-  
+
   if (kDebugMode) {
     print('Handling background message: ${message.messageId}');
     print('Title: ${message.notification?.title}');

@@ -13,13 +13,13 @@ import 'package:pulip_webapp/utils/app_state.dart';
 /// Material Design을 사용하여 라이트/다크 모드를 지원합니다.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Firebase 초기화
   await Firebase.initializeApp();
-  
+
   // FCM 서비스 초기화
   await FCMService.initialize();
-  
+
   runApp(const PulipWebApp());
 }
 
