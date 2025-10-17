@@ -14,9 +14,9 @@ dependencies:
   webview_flutter: ^4.4.2
   webview_flutter_wkwebview: ^3.9.4
   
-  # Firebase (임시 제거 - Android embedding v2 호환성 문제)
-  # firebase_core: ^2.24.2
-  # firebase_messaging: ^14.7.10
+  # Firebase
+  firebase_core: ^2.24.2
+  firebase_messaging: ^14.7.10
   
   # HTTP 요청
   http: ^1.1.2
