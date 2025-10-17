@@ -53,7 +53,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
             });
           },
                  onPageStarted: (String url) {
-                   print('🌐 WebView 페이지 시작: $url');
+                   // print('🌐 WebView 페이지 시작: $url');
                    setState(() {
                      _isLoading = true;
                      _currentUrl = url;
@@ -66,12 +66,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
                        setState(() {
                          _isLoading = false;
                        });
-                       print('⏰ WebView 로딩 타임아웃');
+                       // print('⏰ WebView 로딩 타임아웃');
                      }
                    });
                  },
           onPageFinished: (String url) {
-            print('✅ WebView 페이지 완료: $url');
+            // print('✅ WebView 페이지 완료: $url');
             _loadingTimer?.cancel();
             setState(() {
               _isLoading = false;
@@ -82,7 +82,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
             _setupJavaScriptChannels();
           },
           onWebResourceError: (WebResourceError error) {
-            print('❌ WebView 에러: ${error.description} (코드: ${error.errorCode})');
+            // print('❌ WebView 에러: ${error.description} (코드: ${error.errorCode})');
             setState(() {
               _isLoading = false;
             });
