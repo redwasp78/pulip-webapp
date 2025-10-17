@@ -23,7 +23,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool _isLoading = true;
   final bool _canGoBack = false;
   final bool _canGoForward = false;
-  String _currentUrl = 'data:text/html;charset=utf-8,<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Pulip WebApp</title><style>body{font-family:Arial,sans-serif;margin:20px;background:#f0f0f0}.container{max-width:600px;margin:0 auto;background:white;padding:20px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1)}h1{color:#2196F3;text-align:center}.status{background:#4CAF50;color:white;padding:10px;border-radius:5px;text-align:center;margin:20px 0}button{background:#2196F3;color:white;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;margin:5px}button:hover{background:#1976D2}</style></head><body><div class="container"><h1>🎉 Pulip WebApp 테스트</h1><div class="status">✅ WebView가 정상적으로 로드되었습니다!</div><p>이 페이지는 Flutter WebView에서 정상적으로 표시되고 있습니다.</p><h3>테스트 기능:</h3><button onclick="testJavaScript()">JavaScript 테스트</button><button onclick="testFlutterMessage()">Flutter 통신 테스트</button><div id="result" style="margin-top:20px;padding:10px;background:#f5f5f5;border-radius:5px;"></div></div><script>function testJavaScript(){document.getElementById("result").innerHTML="<strong>JavaScript 작동 확인:</strong> "+new Date().toLocaleString()}function testFlutterMessage(){if(window.flutter&&window.flutter.postMessage){window.flutter.postMessage("Hello from WebView!");document.getElementById("result").innerHTML="<strong>Flutter 통신:</strong> 메시지 전송 완료"}else{document.getElementById("result").innerHTML="<strong>Flutter 통신:</strong> window.flutter.postMessage를 찾을 수 없습니다"}}window.addEventListener("load",function(){console.log("Pulip WebApp 테스트 페이지 로드 완료")});</script></body></html>';
+  String _currentUrl = 'https://www.pulip.com';
   int _progress = 0;
   Timer? _loadingTimer;
 
@@ -52,24 +52,26 @@ class _WebViewScreenState extends State<WebViewScreen> {
               _isLoading = progress < 100;
             });
           },
-          onPageStarted: (String url) {
-            setState(() {
-              _isLoading = true;
-              _currentUrl = url;
-            });
-            
-            // 30초 타임아웃 설정
-            _loadingTimer?.cancel();
-            _loadingTimer = Timer(const Duration(seconds: 30), () {
-              if (_isLoading) {
-                setState(() {
-                  _isLoading = false;
-                });
-                print('WebView loading timeout');
-              }
-            });
-          },
+                 onPageStarted: (String url) {
+                   print('🌐 WebView 페이지 시작: $url');
+                   setState(() {
+                     _isLoading = true;
+                     _currentUrl = url;
+                   });
+                   
+                   // 30초 타임아웃 설정
+                   _loadingTimer?.cancel();
+                   _loadingTimer = Timer(const Duration(seconds: 30), () {
+                     if (_isLoading) {
+                       setState(() {
+                         _isLoading = false;
+                       });
+                       print('⏰ WebView 로딩 타임아웃');
+                     }
+                   });
+                 },
           onPageFinished: (String url) {
+            print('✅ WebView 페이지 완료: $url');
             _loadingTimer?.cancel();
             setState(() {
               _isLoading = false;
@@ -80,7 +82,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
             _setupJavaScriptChannels();
           },
           onWebResourceError: (WebResourceError error) {
-            print('WebView Error: ${error.description}');
+            print('❌ WebView 에러: ${error.description} (코드: ${error.errorCode})');
             setState(() {
               _isLoading = false;
             });
