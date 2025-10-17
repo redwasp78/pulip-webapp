@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 // import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -16,6 +17,7 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  Timer? _navigationTimer;
 
   @override
   void initState() {
@@ -40,17 +42,18 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
+    _navigationTimer?.cancel();
     _animationController.dispose();
     super.dispose();
   }
 
   /// WebView 화면으로 전환
-  Future<void> _navigateToWebView() async {
-    await Future.delayed(const Duration(seconds: 3));
-
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/webview');
-    }
+  void _navigateToWebView() {
+    _navigationTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/webview');
+      }
+    });
   }
 
   @override

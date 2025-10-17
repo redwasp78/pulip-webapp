@@ -17,5 +17,11 @@ void main() {
     // Verify that the app starts with splash screen
     expect(find.text('Pulip WebApp'), findsOneWidget);
     expect(find.text('웹과 앱의 완벽한 결합'), findsOneWidget);
+    
+    // Wait for any pending timers to complete
+    await tester.pumpAndSettle();
+    
+    // Clean up any remaining timers
+    await tester.binding.delayed(Duration.zero);
   });
 }
