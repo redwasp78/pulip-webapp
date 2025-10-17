@@ -1,181 +1,192 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+// import 'package:device_info_plus/device_info_plus.dart';
 
 /// Firebase Cloud Messaging 서비스
-/// 
+///
 /// 푸시 알림의 초기화, 토큰 관리, 메시지 처리를 담당합니다.
+/// 백그라운드 및 포그라운드 알림을 모두 지원합니다.
 class FCMService {
-  static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   static String? _fcmToken;
-  static String? _initialMessage;
+  static StreamSubscription<RemoteMessage>? _messageSubscription;
 
   /// FCM 서비스 초기화
   static Future<void> initialize() async {
-    // 알림 권한 요청
-    await _requestPermission();
-    
-    // FCM 토큰 가져오기
-    await _getFCMToken();
-    
-    // 메시지 핸들러 설정
-    _setupMessageHandlers();
-    
-    // 백그라운드에서 앱이 시작된 경우 처리
-    await _handleInitialMessage();
+    try {
+      // 알림 권한 요청
+      await _requestPermission();
+
+      // FCM 토큰 가져오기
+      await _getFCMToken();
+
+      // 포그라운드 메시지 리스너 설정
+      _setupForegroundMessageListener();
+
+      // 백그라운드 메시지 핸들러 설정
+      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+      // 알림 클릭 시 앱 열기 처리
+      _handleNotificationTap();
+
+      if (kDebugMode) {
+        print('FCM Service initialized successfully');
+        print('FCM Token: $_fcmToken');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('FCM Service initialization failed: $e');
+      }
+    }
   }
 
   /// 알림 권한 요청
   static Future<void> _requestPermission() async {
-    final settings = await _firebaseMessaging.requestPermission(
+    final settings = await _messaging.requestPermission(
       alert: true,
+      announcement: false,
       badge: true,
-      sound: true,
+      carPlay: false,
+      criticalAlert: false,
       provisional: false,
+      sound: true,
     );
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      debugPrint('사용자가 알림 권한을 허용했습니다.');
-    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
-      debugPrint('사용자가 임시 알림 권한을 허용했습니다.');
-    } else {
-      debugPrint('사용자가 알림 권한을 거부했습니다.');
+    if (kDebugMode) {
+      print('Permission granted: ${settings.authorizationStatus}');
     }
   }
 
   /// FCM 토큰 가져오기
   static Future<void> _getFCMToken() async {
     try {
-      _fcmToken = await _firebaseMessaging.getToken();
-      debugPrint('FCM Token: $_fcmToken');
-      
-      // 토큰을 SharedPreferences에 저장
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('fcm_token', _fcmToken ?? '');
+      _fcmToken = await _messaging.getToken();
       
       // 토큰 갱신 리스너 설정
-      _firebaseMessaging.onTokenRefresh.listen((token) {
-        _fcmToken = token;
-        _saveTokenToPreferences(token);
+      _messaging.onTokenRefresh.listen((newToken) {
+        _fcmToken = newToken;
+        if (kDebugMode) {
+          print('FCM Token refreshed: $newToken');
+        }
+        // 서버에 새 토큰 전송 로직 추가 가능
       });
     } catch (e) {
-      debugPrint('FCM 토큰 가져오기 오류: $e');
+      if (kDebugMode) {
+        print('Failed to get FCM token: $e');
+      }
     }
   }
 
-  /// 토큰을 SharedPreferences에 저장
-  static Future<void> _saveTokenToPreferences(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('fcm_token', token);
-    debugPrint('FCM 토큰이 갱신되었습니다: $token');
+  /// 포그라운드 메시지 리스너 설정
+  static void _setupForegroundMessageListener() {
+    _messageSubscription = FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (kDebugMode) {
+        print('Received foreground message: ${message.messageId}');
+        print('Title: ${message.notification?.title}');
+        print('Body: ${message.notification?.body}');
+        print('Data: ${message.data}');
+      }
+
+      // 포그라운드에서 알림 표시
+      _showForegroundNotification(message);
+    });
   }
 
-  /// 메시지 핸들러 설정
-  static void _setupMessageHandlers() {
-    // 포그라운드 메시지 처리
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint('포그라운드 메시지 수신: ${message.notification?.title}');
-      _handleForegroundMessage(message);
-    });
+  /// 포그라운드 알림 표시
+  static void _showForegroundNotification(RemoteMessage message) {
+    // Flutter Local Notifications를 사용하여 포그라운드 알림 표시
+    // 현재는 로그만 출력
+    if (kDebugMode) {
+      print('Showing foreground notification: ${message.notification?.title}');
+    }
+  }
 
-    // 백그라운드 메시지 처리 (앱이 백그라운드에 있거나 종료된 상태)
+  /// 알림 클릭 시 앱 열기 처리
+  static void _handleNotificationTap() {
+    // 앱이 종료된 상태에서 알림 클릭 시
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      debugPrint('백그라운드 메시지 클릭: ${message.notification?.title}');
-      _handleBackgroundMessage(message);
+      if (kDebugMode) {
+        print('Notification tapped: ${message.messageId}');
+        print('Data: ${message.data}');
+      }
+      
+      // 알림 데이터에 따라 WebView URL 변경
+      _handleNotificationNavigation(message.data);
+    });
+
+    // 앱이 백그라운드 상태에서 알림 클릭 시
+    _messaging.getInitialMessage().then((RemoteMessage? message) {
+      if (message != null) {
+        if (kDebugMode) {
+          print('App opened from notification: ${message.messageId}');
+          print('Data: ${message.data}');
+        }
+        
+        _handleNotificationNavigation(message.data);
+      }
     });
   }
 
-  /// 초기 메시지 처리 (앱이 백그라운드에서 시작된 경우)
-  static Future<void> _handleInitialMessage() async {
-    final initialMessage = await _firebaseMessaging.getInitialMessage();
-    if (initialMessage != null) {
-      _initialMessage = initialMessage.data.toString();
-      debugPrint('초기 메시지: $_initialMessage');
-      _handleBackgroundMessage(initialMessage);
-    }
-  }
-
-  /// 포그라운드 메시지 처리
-  static void _handleForegroundMessage(RemoteMessage message) {
-    // 포그라운드에서는 직접 알림을 표시할 수 없으므로
-    // 앱 내에서 알림을 처리해야 합니다.
-    if (message.notification != null) {
-      final title = message.notification!.title ?? '알림';
-      final body = message.notification!.body ?? '';
-      
-      // 앱 내 알림 표시 로직
-      _showInAppNotification(title, body);
-    }
-  }
-
-  /// 백그라운드 메시지 처리
-  static void _handleBackgroundMessage(RemoteMessage message) {
-    // 메시지 데이터에서 URL 추출
-    final url = message.data['url'] ?? message.data['target_url'];
-    
-    if (url != null) {
+  /// 알림 클릭 시 네비게이션 처리
+  static void _handleNotificationNavigation(Map<String, dynamic> data) {
+    final String? targetUrl = data['url'];
+    if (targetUrl != null) {
       // WebView로 특정 URL 이동
-      _navigateToUrl(url);
+      // Navigator를 사용하여 WebView 화면으로 이동
+      if (kDebugMode) {
+        print('Navigating to URL: $targetUrl');
+      }
     }
-  }
-
-  /// 앱 내 알림 표시
-  static void _showInAppNotification(String title, String body) {
-    // 실제 구현에서는 GlobalKey를 통해 현재 화면에 스낵바 표시
-    debugPrint('앱 내 알림: $title - $body');
-  }
-
-  /// URL로 네비게이션
-  static void _navigateToUrl(String url) {
-    // 실제 구현에서는 Navigator를 통해 WebView로 이동
-    debugPrint('알림 클릭으로 이동할 URL: $url');
   }
 
   /// FCM 토큰 반환
   static String? get fcmToken => _fcmToken;
 
-  /// 초기 메시지 반환
-  static String? get initialMessage => _initialMessage;
-
-  /// 토픽 구독
-  static Future<void> subscribeToTopic(String topic) async {
-    try {
-      await _firebaseMessaging.subscribeToTopic(topic);
-      debugPrint('토픽 구독 성공: $topic');
-    } catch (e) {
-      debugPrint('토픽 구독 오류: $e');
+  /// 디바이스 정보 가져오기 (임시 주석 처리)
+  static Future<Map<String, dynamic>> getDeviceInfo() async {
+    // final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    
+    if (Platform.isAndroid) {
+      // final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      return {
+        'platform': 'android',
+        'model': 'Unknown',
+        'version': 'Unknown',
+        'sdkInt': 0,
+      };
+    } else if (Platform.isIOS) {
+      // final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      return {
+        'platform': 'ios',
+        'model': 'Unknown',
+        'version': 'Unknown',
+        'name': 'Unknown',
+      };
     }
+    
+    return {'platform': 'unknown'};
   }
 
-  /// 토픽 구독 해제
-  static Future<void> unsubscribeFromTopic(String topic) async {
-    try {
-      await _firebaseMessaging.unsubscribeFromTopic(topic);
-      debugPrint('토픽 구독 해제 성공: $topic');
-    } catch (e) {
-      debugPrint('토픽 구독 해제 오류: $e');
-    }
-  }
-
-  /// 저장된 FCM 토큰 가져오기
-  static Future<String?> getStoredToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('fcm_token');
-  }
-
-  /// 알림 설정 확인
-  static Future<bool> isNotificationEnabled() async {
-    final settings = await _firebaseMessaging.getNotificationSettings();
-    return settings.authorizationStatus == AuthorizationStatus.authorized ||
-           settings.authorizationStatus == AuthorizationStatus.provisional;
+  /// 서비스 정리
+  static void dispose() {
+    _messageSubscription?.cancel();
   }
 }
 
-/// 백그라운드 메시지 핸들러 (최상위 레벨 함수)
-/// 
-/// 앱이 백그라운드에서 실행 중일 때 메시지를 처리합니다.
+/// 백그라운드 메시지 핸들러
+/// 앱이 백그라운드에 있을 때 호출됩니다.
 @pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  debugPrint('백그라운드 메시지 처리: ${message.messageId}');
-  debugPrint('메시지 데이터: ${message.data}');
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Firebase 초기화
+  await Firebase.initializeApp();
+  
+  if (kDebugMode) {
+    print('Handling background message: ${message.messageId}');
+    print('Title: ${message.notification?.title}');
+    print('Body: ${message.notification?.body}');
+    print('Data: ${message.data}');
+  }
 }
