@@ -1,0 +1,14 @@
+# Fastlane Appfile
+# 앱 식별자 및 설정
+
+# Android 설정
+android_package_name("kr.pe.kk.webapp")
+android_application_id("kr.pe.kk.webapp")
+
+# iOS 설정
+apple_id("your-apple-id@example.com") # 실제 Apple ID로 변경
+itunes_connect_team_id("YOUR_TEAM_ID") # 실제 팀 ID로 변경
+app_identifier("kr.pe.kk.webapp")
+
+# 선택사항: 자동 코드 서명
+# enable_automatic_code_signing(path: "ios/Runner.xcodeproj")

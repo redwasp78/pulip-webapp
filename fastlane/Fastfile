@@ -1,0 +1,97 @@
+# Fastlane 설정 파일
+# Android 및 iOS 자동 배포를 위한 설정
+
+default_platform(:android)
+
+platform :android do
+  desc "Build and deploy Android app to Play Store"
+  lane :deploy do
+    # APK 빌드
+    gradle(
+      task: "assembleRelease",
+      project_dir: "android/"
+    )
+    
+    # Play Store 업로드
+    upload_to_play_store(
+      track: 'internal', # 또는 'alpha', 'beta', 'production'
+      json_key: ENV['PLAY_STORE_JSON_KEY'],
+      aab: 'android/app/build/outputs/bundle/release/app-release.aab',
+      skip_upload_metadata: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: false
+    )
+  end
+  
+  desc "Build APK for testing"
+  lane :build_apk do
+    gradle(
+      task: "assembleRelease",
+      project_dir: "android/"
+    )
+  end
+end
+
+platform :ios do
+  desc "Build and deploy iOS app to TestFlight"
+  lane :deploy do
+    # iOS 빌드
+    build_app(
+      workspace: "ios/Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store",
+      export_options: {
+        provisioningProfiles: {
+          "kr.pe.kk.webapp" => "match AppStore kr.pe.kk.webapp"
+        }
+      }
+    )
+    
+    # TestFlight 업로드
+    upload_to_testflight(
+      api_key: ENV['APP_STORE_CONNECT_API_KEY'],
+      skip_waiting_for_build_processing: true
+    )
+  end
+  
+  desc "Build IPA for testing"
+  lane :build_ipa do
+    build_app(
+      workspace: "ios/Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "development"
+    )
+  end
+end
+
+# 공통 설정
+before_all do
+  # Flutter 의존성 설치
+  sh("flutter pub get")
+  
+  # Flutter 빌드
+  sh("flutter build apk --release")
+  sh("flutter build ios --release --no-codesign")
+end
+
+after_all do |lane|
+  # 빌드 완료 후 알림
+  if is_ci?
+    slack(
+      message: "🚀 #{lane} 완료!",
+      channel: "#mobile-releases",
+      success: true
+    )
+  end
+end
+
+error do |lane, exception|
+  # 에러 발생 시 알림
+  if is_ci?
+    slack(
+      message: "❌ #{lane} 실패: #{exception.message}",
+      channel: "#mobile-releases",
+      success: false
+    )
+  end
+end
