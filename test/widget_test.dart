@@ -6,10 +6,25 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
+import 'package:webview_flutter_platform_interface/src/webview_platform.dart';
 
 import 'package:pulip_webapp/main.dart';
 
+class MockWebViewPlatform extends WebViewPlatform {
+  @override
+  WebViewPlatformController createPlatformController(
+    WebViewPlatformControllerCreationParams params,
+  ) {
+    throw UnimplementedError();
+  }
+}
+
 void main() {
+  setUpAll(() {
+    WebViewPlatform.instance = MockWebViewPlatform();
+  });
+
   testWidgets('Pulip WebApp smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const PulipWebApp());
