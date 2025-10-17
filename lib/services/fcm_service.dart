@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:device_info_plus/device_info_plus.dart';
+// import 'package:device_info_plus/device_info_plus.dart';
 
 /// Firebase Cloud Messaging 서비스
 ///
@@ -145,25 +145,25 @@ class FCMService {
   /// FCM 토큰 반환
   static String? get fcmToken => _fcmToken;
 
-  /// 디바이스 정보 가져오기
+  /// 디바이스 정보 가져오기 (임시 주석 처리)
   static Future<Map<String, dynamic>> getDeviceInfo() async {
-    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    // final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     
     if (Platform.isAndroid) {
-      final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      // final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       return {
         'platform': 'android',
-        'model': androidInfo.model,
-        'version': androidInfo.version.release,
-        'sdkInt': androidInfo.version.sdkInt,
+        'model': 'Unknown',
+        'version': 'Unknown',
+        'sdkInt': 0,
       };
     } else if (Platform.isIOS) {
-      final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      // final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
       return {
         'platform': 'ios',
-        'model': iosInfo.model,
-        'version': iosInfo.systemVersion,
-        'name': iosInfo.name,
+        'model': 'Unknown',
+        'version': 'Unknown',
+        'name': 'Unknown',
       };
     }
     
