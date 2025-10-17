@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,8 +23,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool _isLoading = true;
   final bool _canGoBack = false;
   final bool _canGoForward = false;
-  String _currentUrl = 'https://www.naver.com';
+  String _currentUrl = 'https://www.google.com';
   int _progress = 0;
+  Timer? _loadingTimer;
 
   @override
   void initState() {
@@ -41,6 +43,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   void _initializeWebView() {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setUserAgent('Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36')
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
@@ -54,8 +57,20 @@ class _WebViewScreenState extends State<WebViewScreen> {
               _isLoading = true;
               _currentUrl = url;
             });
+            
+            // 30초 타임아웃 설정
+            _loadingTimer?.cancel();
+            _loadingTimer = Timer(const Duration(seconds: 30), () {
+              if (_isLoading) {
+                setState(() {
+                  _isLoading = false;
+                });
+                print('WebView loading timeout');
+              }
+            });
           },
           onPageFinished: (String url) {
+            _loadingTimer?.cancel();
             setState(() {
               _isLoading = false;
               _currentUrl = url;
@@ -63,6 +78,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
             // JavaScript 통신 설정
             _setupJavaScriptChannels();
+          },
+          onWebResourceError: (WebResourceError error) {
+            print('WebView Error: ${error.description}');
+            setState(() {
+              _isLoading = false;
+            });
           },
           onNavigationRequest: (NavigationRequest request) {
             // 외부 링크 처리
@@ -238,6 +259,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   @override
   void dispose() {
+    _loadingTimer?.cancel();
     super.dispose();
   }
 }
