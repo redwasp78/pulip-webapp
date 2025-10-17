@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:pulip_webapp/screens/splash_screen.dart';
 import 'package:pulip_webapp/screens/webview_screen.dart';
 import 'package:pulip_webapp/screens/settings_screen.dart';
-import 'package:pulip_webapp/services/fcm_service.dart';
+// import 'package:pulip_webapp/services/fcm_service.dart';
 import 'package:pulip_webapp/utils/app_state.dart';
 
 /// Pulip WebApp 메인 진입점
@@ -14,11 +14,11 @@ import 'package:pulip_webapp/utils/app_state.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Firebase 초기화
-  await Firebase.initializeApp();
+  // Firebase 초기화 (임시 주석 처리)
+  // await Firebase.initializeApp();
   
-  // FCM 서비스 초기화
-  await FCMService.initialize();
+  // FCM 서비스 초기화 (임시 주석 처리)
+  // await FCMService.initialize();
   
   runApp(const PulipWebApp());
 }
