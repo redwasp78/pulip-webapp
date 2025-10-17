@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+// import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 /// 스플래시 화면
 ///
@@ -105,7 +105,10 @@ class _SplashScreenState extends State<SplashScreen>
               const SizedBox(height: 50),
 
               // 로딩 인디케이터
-              const SpinKitPulse(color: Colors.white, size: 50.0),
+              const CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 3.0,
+              ),
             ],
           ),
         ),

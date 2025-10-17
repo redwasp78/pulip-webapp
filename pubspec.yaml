@@ -30,8 +30,8 @@ dependencies:
   # 상태 관리
   provider: ^6.1.1
   
-  # 로딩 인디케이터
-  flutter_spinkit: ^5.1.0
+  # 로딩 인디케이터 (Flutter 기본 위젯 사용)
+  # flutter_spinkit: ^5.1.0
   
   # 권한 관리 (임시 제거 - Android embedding v2 호환성 문제)
   # permission_handler: ^11.2.0
