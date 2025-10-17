@@ -5,10 +5,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:pulip_webapp/widgets/webview_app_bar.dart';
 import 'package:pulip_webapp/widgets/webview_bottom_bar.dart';
 
-  /// WebView 메인 화면
-  ///
-  /// 네이버 웹사이트를 표시하는 메인 화면입니다.
-  /// 당겨서 새로고침, 뒤로가기, JavaScript 통신, 외부 링크 처리 기능을 제공합니다.
+/// WebView 메인 화면
+///
+/// 네이버 웹사이트를 표시하는 메인 화면입니다.
+/// 당겨서 새로고침, 뒤로가기, JavaScript 통신, 외부 링크 처리 기능을 제공합니다.
 class WebViewScreen extends StatefulWidget {
   final String? initialUrl;
 
@@ -43,7 +43,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
   void _initializeWebView() {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setUserAgent('Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36')
+      ..setUserAgent(
+          'Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36')
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
@@ -52,24 +53,24 @@ class _WebViewScreenState extends State<WebViewScreen> {
               _isLoading = progress < 100;
             });
           },
-                 onPageStarted: (String url) {
-                   // print('🌐 WebView 페이지 시작: $url');
-                   setState(() {
-                     _isLoading = true;
-                     _currentUrl = url;
-                   });
-                   
-                   // 30초 타임아웃 설정
-                   _loadingTimer?.cancel();
-                   _loadingTimer = Timer(const Duration(seconds: 30), () {
-                     if (_isLoading) {
-                       setState(() {
-                         _isLoading = false;
-                       });
-                       // print('⏰ WebView 로딩 타임아웃');
-                     }
-                   });
-                 },
+          onPageStarted: (String url) {
+            // print('🌐 WebView 페이지 시작: $url');
+            setState(() {
+              _isLoading = true;
+              _currentUrl = url;
+            });
+
+            // 30초 타임아웃 설정
+            _loadingTimer?.cancel();
+            _loadingTimer = Timer(const Duration(seconds: 30), () {
+              if (_isLoading) {
+                setState(() {
+                  _isLoading = false;
+                });
+                // print('⏰ WebView 로딩 타임아웃');
+              }
+            });
+          },
           onPageFinished: (String url) {
             // print('✅ WebView 페이지 완료: $url');
             _loadingTimer?.cancel();
