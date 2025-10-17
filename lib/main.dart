@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pulip_webapp/screens/splash_screen.dart';
 import 'package:pulip_webapp/screens/webview_screen.dart';
+import 'package:pulip_webapp/screens/settings_screen.dart';
 // import 'package:pulip_webapp/services/fcm_service.dart';
 import 'package:pulip_webapp/utils/app_state.dart';
 
@@ -59,6 +60,7 @@ class PulipWebApp extends StatelessWidget {
             routes: {
               '/': (context) => const SplashScreen(),
               '/webview': (context) => const WebViewScreen(),
+              '/settings': (context) => const SettingsScreen(),
             },
 
             // 알림 클릭 시 라우팅 처리

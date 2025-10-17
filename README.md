@@ -5,7 +5,7 @@ Flutter로 개발된 하이브리드 모바일 앱으로, Pulip 웹사이트를 
 ## 🚀 주요 기능
 
 ### 🌐 WebView 기반 메인 화면
-- **URL**: https://www.pulip.com
+- **URL**: https://www.naver.com
 - 로딩 인디케이터 및 진행률 표시
 - 당겨서 새로고침(Pull to Refresh) 지원
 - Android/iOS 뒤로가기 버튼 동작
@@ -225,5 +225,5 @@ flutter logs
 ---
 
 **개발팀**: Pulip Team  
-**이메일**: support@pulip.com  
-**웹사이트**: https://www.pulip.com
+**이메일**: support@naver.com  
+**웹사이트**: https://www.naver.com
