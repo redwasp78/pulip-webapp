@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// 캐시 초기화 확인 다이얼로그
-/// 
+///
 /// 사용자에게 캐시 초기화에 대한 확인을 요청합니다.
 class CacheClearDialog extends StatefulWidget {
   const CacheClearDialog({super.key});
@@ -23,7 +23,7 @@ class _CacheClearDialogState extends State<CacheClearDialog> {
       // 실제 캐시 초기화 로직 구현
       // WebView 캐시, SharedPreferences 등
       await Future.delayed(const Duration(seconds: 2)); // 시뮬레이션
-      
+
       if (mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -58,11 +58,7 @@ class _CacheClearDialogState extends State<CacheClearDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.warning,
-            color: Colors.orange,
-            size: 48,
-          ),
+          const Icon(Icons.warning, color: Colors.orange, size: 48),
           const SizedBox(height: 16),
           const Text(
             '저장된 웹 데이터를 모두 삭제하시겠습니까?\n\n'
@@ -73,10 +69,7 @@ class _CacheClearDialogState extends State<CacheClearDialog> {
             const SizedBox(height: 16),
             const CircularProgressIndicator(),
             const SizedBox(height: 8),
-            const Text(
-              '캐시를 초기화하는 중...',
-              style: TextStyle(fontSize: 12),
-            ),
+            const Text('캐시를 초기화하는 중...', style: TextStyle(fontSize: 12)),
           ],
         ],
       ),

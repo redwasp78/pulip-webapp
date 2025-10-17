@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// WebView 하단 네비게이션 바
-/// 
+///
 /// 뒤로가기, 앞으로가기, 홈, 새로고침 버튼을 제공합니다.
 class WebViewBottomBar extends StatelessWidget {
   final bool canGoBack;
@@ -28,10 +28,7 @@ class WebViewBottomBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         border: Border(
-          top: BorderSide(
-            color: Theme.of(context).dividerColor,
-            width: 0.5,
-          ),
+          top: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
         ),
       ),
       child: Row(
@@ -41,26 +38,26 @@ class WebViewBottomBar extends StatelessWidget {
           IconButton(
             icon: Icon(
               Icons.arrow_back,
-              color: canGoBack 
-                ? Theme.of(context).colorScheme.onSurface
-                : Colors.grey,
+              color: canGoBack
+                  ? Theme.of(context).colorScheme.onSurface
+                  : Colors.grey,
             ),
             onPressed: canGoBack ? onBack : null,
             tooltip: '뒤로가기',
           ),
-          
+
           // 앞으로가기 버튼
           IconButton(
             icon: Icon(
               Icons.arrow_forward,
-              color: canGoForward 
-                ? Theme.of(context).colorScheme.onSurface
-                : Colors.grey,
+              color: canGoForward
+                  ? Theme.of(context).colorScheme.onSurface
+                  : Colors.grey,
             ),
             onPressed: canGoForward ? onForward : null,
             tooltip: '앞으로가기',
           ),
-          
+
           // 홈 버튼
           IconButton(
             icon: Icon(
@@ -70,7 +67,7 @@ class WebViewBottomBar extends StatelessWidget {
             onPressed: onHome,
             tooltip: '홈',
           ),
-          
+
           // 새로고침 버튼
           IconButton(
             icon: Icon(

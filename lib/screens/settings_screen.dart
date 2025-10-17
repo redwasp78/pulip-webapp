@@ -5,7 +5,7 @@ import 'package:pulip_webapp/utils/app_state.dart';
 import 'package:pulip_webapp/widgets/cache_clear_dialog.dart';
 
 /// 설정 화면
-/// 
+///
 /// 앱의 다양한 설정 옵션을 제공합니다.
 /// 다크모드, 알림 설정, 캐시 관리, 앱 정보 등을 포함합니다.
 class SettingsScreen extends StatefulWidget {
@@ -17,7 +17,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   // PackageInfo? _packageInfo; // 임시 주석 처리
-  
+
   @override
   void initState() {
     super.initState();
@@ -93,9 +93,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onChanged: (value) => appState.setDarkMode(value),
                 icon: Icons.dark_mode,
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // 알림 설정
               _buildSectionHeader('알림'),
               _buildSwitchTile(
@@ -105,9 +105,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onChanged: (value) => appState.setNotification(value),
                 icon: Icons.notifications,
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // 데이터 관리
               _buildSectionHeader('데이터 관리'),
               _buildListTile(
@@ -116,9 +116,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 icon: Icons.clear_all,
                 onTap: _showCacheClearDialog,
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // 앱 정보
               _buildSectionHeader('앱 정보'),
               _buildListTile(
@@ -140,16 +140,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   );
                 },
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // 버전 정보
               Center(
                 child: Text(
                   '버전 1.0.0 (1)',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                 ),
               ),
             ],

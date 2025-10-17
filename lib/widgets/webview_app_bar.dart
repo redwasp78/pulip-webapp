@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// WebView 상단 앱바
-/// 
+///
 /// URL 표시, 로딩 진행률, 새로고침, 설정 버튼을 포함합니다.
 class WebViewAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String url;
@@ -42,7 +42,7 @@ class WebViewAppBar extends StatelessWidget implements PreferredSizeWidget {
           onPressed: onRefresh,
           tooltip: '새로고침',
         ),
-        
+
         // 설정 버튼
         IconButton(
           icon: const Icon(Icons.settings),
@@ -57,9 +57,9 @@ class WebViewAppBar extends StatelessWidget implements PreferredSizeWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             url,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Colors.grey[600],
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
             overflow: TextOverflow.ellipsis,
           ),
         ),

@@ -5,16 +5,13 @@ import 'package:pulip_webapp/widgets/webview_app_bar.dart';
 import 'package:pulip_webapp/widgets/webview_bottom_bar.dart';
 
 /// WebView 메인 화면
-/// 
+///
 /// Pulip 웹사이트를 표시하는 메인 화면입니다.
 /// 당겨서 새로고침, 뒤로가기, JavaScript 통신, 외부 링크 처리 기능을 제공합니다.
 class WebViewScreen extends StatefulWidget {
   final String? initialUrl;
-  
-  const WebViewScreen({
-    super.key,
-    this.initialUrl,
-  });
+
+  const WebViewScreen({super.key, this.initialUrl});
 
   @override
   State<WebViewScreen> createState() => _WebViewScreenState();
@@ -31,12 +28,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     // 초기 URL 설정
     if (widget.initialUrl != null) {
       _currentUrl = widget.initialUrl!;
     }
-    
+
     _initializeWebView();
   }
 
@@ -63,7 +60,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
               _isLoading = false;
               _currentUrl = url;
             });
-            
+
             // JavaScript 통신 설정
             _setupJavaScriptChannels();
           },
@@ -89,7 +86,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
         _handleJavaScriptMessage(message.message);
       },
     );
-    
+
     // JavaScript에서 Flutter 함수를 호출할 수 있도록 설정
     _controller.runJavaScript('''
       window.flutter = {
@@ -105,7 +102,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
     try {
       // JSON 형태의 메시지 파싱
       final data = message;
-      
+
       // 메시지 타입에 따른 처리
       if (data.contains('notification')) {
         // 알림 관련 메시지 처리
@@ -123,12 +120,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool _isExternalLink(String url) {
     final uri = Uri.parse(url);
     final currentHost = Uri.parse(_currentUrl).host;
-    
+
     // 다른 도메인이거나 특정 프로토콜인 경우 외부 링크로 처리
-    return uri.host != currentHost || 
-           uri.scheme == 'tel' || 
-           uri.scheme == 'mailto' ||
-           uri.scheme == 'sms';
+    return uri.host != currentHost ||
+        uri.scheme == 'tel' ||
+        uri.scheme == 'mailto' ||
+        uri.scheme == 'sms';
   }
 
   /// 외부 URL 실행
@@ -207,7 +204,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
             },
             child: WebViewWidget(controller: _controller),
           ),
-          
+
           // 로딩 오버레이
           if (_isLoading)
             Container(

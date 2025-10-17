@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 네비게이션 유틸리티
-/// 
+///
 /// 뒤로가기, 외부 링크 처리, URL 런칭 등의 네비게이션 관련 기능을 제공합니다.
 class NavigationUtils {
   /// 뒤로가기 버튼 처리
-  /// 
+  ///
   /// Android의 하드웨어 뒤로가기 버튼과 iOS의 제스처를 처리합니다.
   static Future<bool> handleBackButton(
     BuildContext context,
@@ -18,7 +18,7 @@ class NavigationUtils {
       onBackPressed();
       return false; // 기본 뒤로가기 동작 방지
     }
-    
+
     // 뒤로가기가 불가능한 경우 앱 종료 확인
     return await _showExitDialog(context);
   }
@@ -42,12 +42,12 @@ class NavigationUtils {
         ],
       ),
     );
-    
+
     return shouldExit ?? false;
   }
 
   /// 외부 URL 실행
-  /// 
+  ///
   /// 전화, 이메일, SMS, 웹 브라우저 등을 실행합니다.
   static Future<bool> launchExternalUrl(
     String url, {
@@ -55,7 +55,7 @@ class NavigationUtils {
   }) async {
     try {
       final uri = Uri.parse(url);
-      
+
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: mode);
         return true;
@@ -84,43 +84,40 @@ class NavigationUtils {
     final Map<String, String> params = {};
     if (subject != null) params['subject'] = subject;
     if (body != null) params['body'] = body;
-    
+
     final uri = Uri(
       scheme: 'mailto',
       path: email,
       query: _encodeQueryParameters(params),
     );
-    
+
     return await launchExternalUrl(uri.toString());
   }
 
   /// SMS 전송 실행
-  static Future<bool> sendSMS(
-    String phoneNumber, {
-    String? message,
-  }) async {
+  static Future<bool> sendSMS(String phoneNumber, {String? message}) async {
     final uri = Uri(
       scheme: 'sms',
       path: phoneNumber,
       query: message != null ? 'body=$message' : null,
     );
-    
+
     return await launchExternalUrl(uri.toString());
   }
 
   /// URL 쿼리 파라미터 인코딩
   static String _encodeQueryParameters(Map<String, String> params) {
     return params.entries
-        .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .map(
+          (e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+        )
         .join('&');
   }
 
   /// 웹 브라우저에서 URL 열기
   static Future<bool> openInBrowser(String url) async {
-    return await launchExternalUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    );
+    return await launchExternalUrl(url, mode: LaunchMode.externalApplication);
   }
 
   /// 외부 앱에서 URL 열기
@@ -136,14 +133,14 @@ class NavigationUtils {
     try {
       final uri = Uri.parse(url);
       final currentUri = Uri.parse(currentHost);
-      
+
       // 다른 도메인이거나 특정 프로토콜인 경우 외부 링크로 처리
       return uri.host != currentUri.host ||
-             uri.scheme == 'tel' ||
-             uri.scheme == 'mailto' ||
-             uri.scheme == 'sms' ||
-             uri.scheme == 'market' ||
-             uri.scheme == 'itms-apps';
+          uri.scheme == 'tel' ||
+          uri.scheme == 'mailto' ||
+          uri.scheme == 'sms' ||
+          uri.scheme == 'market' ||
+          uri.scheme == 'itms-apps';
     } catch (e) {
       debugPrint('URL 파싱 오류: $e');
       return false;
@@ -198,10 +195,7 @@ class NavigationUtils {
           mainAxisSize: MainAxisSize.min,
           children: [
             const CircularProgressIndicator(),
-            if (message != null) ...[
-              const SizedBox(height: 16),
-              Text(message),
-            ],
+            if (message != null) ...[const SizedBox(height: 16), Text(message)],
           ],
         ),
       ),
