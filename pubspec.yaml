@@ -39,8 +39,8 @@ dependencies:
   # 디바이스 정보 (임시 제거 - Android embedding v2 호환성 문제)
   # device_info_plus: ^9.1.1
   
-  # 패키지 정보
-  package_info_plus: ^5.0.1
+  # 패키지 정보 (임시 제거 - Android embedding v2 호환성 문제)
+  # package_info_plus: ^5.0.1
 
 dev_dependencies:
   flutter_test:

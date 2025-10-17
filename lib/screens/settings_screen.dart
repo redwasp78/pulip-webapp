@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+// import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pulip_webapp/utils/app_state.dart';
 import 'package:pulip_webapp/widgets/cache_clear_dialog.dart';
 
@@ -16,21 +16,21 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  PackageInfo? _packageInfo;
+  // PackageInfo? _packageInfo; // 임시 주석 처리
   
   @override
   void initState() {
     super.initState();
-    _loadPackageInfo();
+    // _loadPackageInfo(); // 임시 주석 처리
   }
 
-  /// 패키지 정보 로드
-  Future<void> _loadPackageInfo() async {
-    final info = await PackageInfo.fromPlatform();
-    setState(() {
-      _packageInfo = info;
-    });
-  }
+  /// 패키지 정보 로드 (임시 주석 처리)
+  // Future<void> _loadPackageInfo() async {
+  //   final info = await PackageInfo.fromPlatform();
+  //   setState(() {
+  //     _packageInfo = info;
+  //   });
+  // }
 
   /// 캐시 초기화 다이얼로그 표시
   void _showCacheClearDialog() {
@@ -46,19 +46,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('앱 정보'),
-        content: Column(
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (_packageInfo != null) ...[
-              Text('앱 이름: ${_packageInfo!.appName}'),
-              const SizedBox(height: 8),
-              Text('버전: ${_packageInfo!.version}'),
-              const SizedBox(height: 8),
-              Text('빌드 번호: ${_packageInfo!.buildNumber}'),
-              const SizedBox(height: 8),
-              Text('패키지명: ${_packageInfo!.packageName}'),
-            ],
+            Text('앱 이름: Pulip WebApp'),
+            SizedBox(height: 8),
+            Text('버전: 1.0.0'),
+            SizedBox(height: 8),
+            Text('빌드 번호: 1'),
+            SizedBox(height: 8),
+            Text('패키지명: kr.pe.kk.webapp'),
           ],
         ),
         actions: [
@@ -146,15 +144,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 24),
               
               // 버전 정보
-              if (_packageInfo != null)
-                Center(
-                  child: Text(
-                    '버전 ${_packageInfo!.version} (${_packageInfo!.buildNumber})',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+              Center(
+                child: Text(
+                  '버전 1.0.0 (1)',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[600],
                   ),
                 ),
+              ),
             ],
           );
         },
