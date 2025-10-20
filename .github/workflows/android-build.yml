@@ -32,14 +32,23 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       
-      - name: Setup Android Keystore
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      - name: Setup Firebase for Android
+        if: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: |
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > android/app/google-services.json
+      
+      - name: Setup Android Keystore
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 && (inputs.build_type == 'release' || inputs.build_type == 'both' || github.event_name == 'push' || github.event_name == 'pull_request') }}
+        run: |
+          mkdir -p android/keystore
           echo '${{ secrets.ANDROID_KEYSTORE_BASE64 }}' | base64 -d > android/keystore/pulip-webapp-release-key.jks
           echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" > android/key.properties
           echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/key.properties
           echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
           echo "storeFile=keystore/pulip-webapp-release-key.jks" >> android/key.properties
+      
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
       
       - name: Test
         run: flutter test
