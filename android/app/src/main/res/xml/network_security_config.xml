@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+           <domain-config cleartextTrafficPermitted="true">
+               <domain includeSubdomains="true">www.pulip.com</domain>
+               <domain includeSubdomains="true">pulip.com</domain>
+               <domain includeSubdomains="true">www.google.com</domain>
+               <domain includeSubdomains="true">google.com</domain>
+               <domain includeSubdomains="true">httpbin.org</domain>
+               <domain includeSubdomains="true">localhost</domain>
+               <domain includeSubdomains="true">10.0.2.2</domain>
+           </domain-config>
+</network-security-config>

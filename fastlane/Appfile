@@ -1,0 +1,18 @@
+# The Appfile is a configuration file for fastlane. It's usually placed in the root of the project.
+# It contains metadata about your app that can be used by fastlane.
+# If you want to get a list of all available options run `fastlane docs`
+
+# The name of your app
+app_identifier("kr.pe.kk.pulip_webapp")
+
+# Your Apple ID
+apple_id("your-apple-id@example.com")
+
+# Your team ID
+team_id("YOUR_TEAM_ID")
+
+# Your Google Play Console service account JSON key file path
+json_key_file("path/to/your/service-account-key.json")
+
+# Your Google Play Console package name
+package_name("kr.pe.kk.pulip_webapp")

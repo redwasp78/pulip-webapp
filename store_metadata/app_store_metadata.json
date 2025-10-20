@@ -1,0 +1,71 @@
+{
+  "app_info": {
+    "bundle_id": "kr.pe.kk.pulipWebapp",
+    "app_name": "Pulip WebApp",
+    "version": "1.0.0",
+    "build_number": "1",
+    "minimum_os_version": "11.0"
+  },
+  "store_listing": {
+    "name": "Pulip WebApp",
+    "subtitle": "웹과 앱의 완벽한 결합",
+    "description": "Pulip WebApp은 웹과 앱의 완벽한 결합을 제공하는 하이브리드 모바일 애플리케이션입니다. Pulip의 모든 기능을 모바일에서 편리하게 이용할 수 있습니다.\n\n주요 기능:\n• WebView 기반 메인 화면\n• 푸시 알림 지원\n• 라이트/다크 모드\n• 당겨서 새로고침\n• 사용자 친화적 인터페이스\n\nPulip WebApp으로 더 편리한 모바일 경험을 시작하세요!",
+    "keywords": "pulip,webapp,hybrid,mobile,webview,business",
+    "category": "BUSINESS",
+    "content_rating": "4+",
+    "age_rating": {
+      "cartoon_violence": false,
+      "realistic_violence": false,
+      "prolonged_violence": false,
+      "sexual_content": false,
+      "nudity": false,
+      "profanity": false,
+      "alcohol": false,
+      "tobacco": false,
+      "drugs": false,
+      "mature_themes": false,
+      "simulated_gambling": false,
+      "horror": false
+    }
+  },
+  "screenshots": {
+    "iphone_6_7_8": [
+      "screenshots/iphone_6_7_8_1.png",
+      "screenshots/iphone_6_7_8_2.png",
+      "screenshots/iphone_6_7_8_3.png"
+    ],
+    "iphone_6_7_8_plus": [
+      "screenshots/iphone_6_7_8_plus_1.png",
+      "screenshots/iphone_6_7_8_plus_2.png"
+    ],
+    "iphone_x": [
+      "screenshots/iphone_x_1.png",
+      "screenshots/iphone_x_2.png"
+    ],
+    "ipad_pro": [
+      "screenshots/ipad_pro_1.png",
+      "screenshots/ipad_pro_2.png"
+    ]
+  },
+  "app_review": {
+    "contact_info": {
+      "first_name": "Pulip",
+      "last_name": "Team",
+      "phone": "+82-10-1234-5678",
+      "email": "support@pulip.com"
+    },
+    "demo_account": {
+      "username": "demo@pulip.com",
+      "password": "demo123"
+    },
+    "notes": "이 앱은 Pulip 웹사이트를 모바일에서 최적화된 형태로 제공하는 하이브리드 앱입니다. WebView를 통해 웹 콘텐츠를 표시하며, 푸시 알림과 같은 네이티브 기능을 제공합니다."
+  },
+  "privacy_policy": "https://www.pulip.com/privacy",
+  "support_url": "https://www.pulip.com/support",
+  "marketing_url": "https://www.pulip.com"
+}
+
+
+
+
+

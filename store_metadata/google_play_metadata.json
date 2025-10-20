@@ -1,0 +1,45 @@
+{
+  "app_info": {
+    "package_name": "kr.pe.kk.pulip_webapp",
+    "app_name": "Pulip WebApp",
+    "version_name": "1.0.0",
+    "version_code": 1,
+    "min_sdk": 21,
+    "target_sdk": 34
+  },
+  "store_listing": {
+    "short_description": "웹과 앱의 완벽한 결합, Pulip WebApp으로 편리한 모바일 경험을 시작하세요!",
+    "full_description": "Pulip WebApp은 웹과 앱의 완벽한 결합을 제공하는 하이브리드 모바일 애플리케이션입니다. Pulip의 모든 기능을 모바일에서 편리하게 이용할 수 있습니다.\n\n주요 기능:\n• WebView 기반 메인 화면\n• 푸시 알림 지원\n• 라이트/다크 모드\n• 당겨서 새로고침\n• 사용자 친화적 인터페이스\n\nPulip WebApp으로 더 편리한 모바일 경험을 시작하세요!",
+    "category": "BUSINESS",
+    "content_rating": "EVERYONE",
+    "keywords": ["pulip", "webapp", "hybrid", "mobile", "webview", "business"]
+  },
+  "screenshots": {
+    "phone": [
+      "screenshots/phone_1.png",
+      "screenshots/phone_2.png",
+      "screenshots/phone_3.png"
+    ],
+    "tablet": [
+      "screenshots/tablet_1.png",
+      "screenshots/tablet_2.png"
+    ]
+  },
+  "permissions": [
+    "android.permission.INTERNET",
+    "android.permission.ACCESS_NETWORK_STATE",
+    "android.permission.RECEIVE_BOOT_COMPLETED",
+    "android.permission.VIBRATE",
+    "android.permission.CAMERA",
+    "android.permission.WRITE_EXTERNAL_STORAGE",
+    "android.permission.READ_EXTERNAL_STORAGE"
+  ],
+  "privacy_policy": "https://www.pulip.com/privacy",
+  "support_url": "https://www.pulip.com/support",
+  "website": "https://www.pulip.com"
+}
+
+
+
+
+
