@@ -10,12 +10,11 @@ on:
       build_type:
         description: 'Select build type'
         required: true
-        default: 'release'
+        default: 'debug'
         type: choice
         options:
           - debug
           - release
-          - both
 
 jobs:
   android-build:
@@ -38,7 +37,7 @@ jobs:
           echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > android/app/google-services.json
       
       - name: Setup Android Keystore
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 && (inputs.build_type == 'release' || github.event_name == 'push' || github.event_name == 'pull_request') }}
         run: |
           mkdir -p android/keystore
           echo '${{ secrets.ANDROID_KEYSTORE_BASE64 }}' | base64 -d > android/keystore/pulip-webapp-release-key.jks
@@ -53,34 +52,34 @@ jobs:
       - name: Test
         run: flutter test
       
-      - name: Build Android Debug APK
-        if: ${{ inputs.build_type == 'debug' || inputs.build_type == 'both' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+      - name: Build Debug APK
+        if: ${{ inputs.build_type == 'debug' || github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: flutter build apk --debug
       
-      - name: Build Android Release APK
-        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+      - name: Build Release APK
+        if: ${{ inputs.build_type == 'release' || github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: flutter build apk --release
       
-      - name: Build Android AAB
-        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+      - name: Build Release AAB
+        if: ${{ inputs.build_type == 'release' || github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: flutter build appbundle --release
       
-      - name: Upload Android Debug APK
-        if: ${{ inputs.build_type == 'debug' || inputs.build_type == 'both' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+      - name: Upload Debug APK
+        if: ${{ inputs.build_type == 'debug' || github.event_name == 'push' || github.event_name == 'pull_request' }}
         uses: actions/upload-artifact@v4
         with:
           name: android-debug-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
       
-      - name: Upload Android Release APK
-        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+      - name: Upload Release APK
+        if: ${{ inputs.build_type == 'release' || github.event_name == 'push' || github.event_name == 'pull_request' }}
         uses: actions/upload-artifact@v4
         with:
           name: android-release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
       
-      - name: Upload Android AAB
-        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+      - name: Upload Release AAB
+        if: ${{ inputs.build_type == 'release' || github.event_name == 'push' || github.event_name == 'pull_request' }}
         uses: actions/upload-artifact@v4
         with:
           name: android-release-aab
@@ -94,10 +93,10 @@ jobs:
           echo "- **Runner**: ${{ runner.os }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📱 Generated Artifacts:" >> $GITHUB_STEP_SUMMARY
-          if [[ "${{ inputs.build_type }}" == "debug" || "${{ inputs.build_type }}" == "both" || "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "pull_request" ]]; then
+          if [[ "${{ inputs.build_type }}" == "debug" || "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "pull_request" ]]; then
             echo "- ✅ Android Debug APK" >> $GITHUB_STEP_SUMMARY
           fi
-          if [[ "${{ inputs.build_type }}" == "release" || "${{ inputs.build_type }}" == "both" || "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "pull_request" ]]; then
+          if [[ "${{ inputs.build_type }}" == "release" || "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "pull_request" ]]; then
             echo "- ✅ Android Release APK (Signed)" >> $GITHUB_STEP_SUMMARY
             echo "- ✅ Android Release AAB (Signed)" >> $GITHUB_STEP_SUMMARY
           fi
