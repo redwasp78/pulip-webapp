@@ -32,6 +32,9 @@ jobs:
       - name: Build AAB (Release)
         run: flutter build appbundle --release
       
+      - name: Build iOS (Release)
+        run: flutter build ios --release --no-codesign
+      
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
@@ -49,3 +52,9 @@ jobs:
         with:
           name: app-release.aab
           path: build/app/outputs/bundle/release/app-release.aab
+      
+      - name: Upload iOS Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build
+          path: build/ios/iphoneos/Runner.app
