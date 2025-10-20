@@ -1,0 +1,156 @@
+name: Unified Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Select platform to build'
+        required: true
+        default: 'android'
+        type: choice
+        options:
+          - android
+          - ios
+          - both
+      build_type:
+        description: 'Select build type'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+          - debug
+          - release
+          - both
+
+jobs:
+  android-build:
+    if: ${{ inputs.platform == 'android' || inputs.platform == 'both' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.0'
+          channel: 'stable'
+      
+      - name: Install dependencies
+        run: flutter pub get
+      
+      - name: Setup Android Keystore
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          echo '${{ secrets.ANDROID_KEYSTORE_BASE64 }}' | base64 -d > android/keystore/pulip-webapp-release-key.jks
+          echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=keystore/pulip-webapp-release-key.jks" >> android/key.properties
+      
+      - name: Test
+        run: flutter test
+      
+      - name: Build Android Debug APK
+        if: ${{ inputs.build_type == 'debug' || inputs.build_type == 'both' }}
+        run: flutter build apk --debug
+      
+      - name: Build Android Release APK
+        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' }}
+        run: flutter build apk --release
+      
+      - name: Build Android AAB
+        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' }}
+        run: flutter build appbundle --release
+      
+      - name: Upload Android Debug APK
+        if: ${{ inputs.build_type == 'debug' || inputs.build_type == 'both' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+      
+      - name: Upload Android Release APK
+        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+      
+      - name: Upload Android AAB
+        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+
+  ios-build:
+    if: ${{ inputs.platform == 'ios' || inputs.platform == 'both' }}
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.0'
+          channel: 'stable'
+      
+      - name: Install dependencies
+        run: flutter pub get
+      
+      - name: Test
+        run: flutter test
+      
+      - name: Build iOS Debug
+        if: ${{ inputs.build_type == 'debug' || inputs.build_type == 'both' }}
+        run: flutter build ios --debug --no-codesign
+      
+      - name: Build iOS Release
+        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' }}
+        run: flutter build ios --release --no-codesign
+      
+      - name: Upload iOS Debug Build
+        if: ${{ inputs.build_type == 'debug' || inputs.build_type == 'both' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-debug-build
+          path: build/ios/iphonesimulator/Runner.app
+      
+      - name: Upload iOS Release Build
+        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-release-build
+          path: build/ios/iphoneos/Runner.app
+
+  build-summary:
+    needs: [android-build, ios-build]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Build Summary
+        run: |
+          echo "## 🚀 Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Platform**: ${{ inputs.platform }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Type**: ${{ inputs.build_type }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📱 Generated Artifacts:" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ inputs.platform }}" == "android" || "${{ inputs.platform }}" == "both" ]]; then
+            if [[ "${{ inputs.build_type }}" == "debug" || "${{ inputs.build_type }}" == "both" ]]; then
+              echo "- ✅ Android Debug APK" >> $GITHUB_STEP_SUMMARY
+            fi
+            if [[ "${{ inputs.build_type }}" == "release" || "${{ inputs.build_type }}" == "both" ]]; then
+              echo "- ✅ Android Release APK" >> $GITHUB_STEP_SUMMARY
+              echo "- ✅ Android Release AAB" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+          if [[ "${{ inputs.platform }}" == "ios" || "${{ inputs.platform }}" == "both" ]]; then
+            if [[ "${{ inputs.build_type }}" == "debug" || "${{ inputs.build_type }}" == "both" ]]; then
+              echo "- ✅ iOS Debug Build (Simulator)" >> $GITHUB_STEP_SUMMARY
+            fi
+            if [[ "${{ inputs.build_type }}" == "release" || "${{ inputs.build_type }}" == "both" ]]; then
+              echo "- ✅ iOS Release Build (Device)" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Note**: iOS builds are unsigned. For App Store distribution, additional code signing setup is required."

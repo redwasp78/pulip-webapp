@@ -1,0 +1,74 @@
+name: iOS Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Select iOS build type'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+          - debug
+          - release
+
+jobs:
+  ios-build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.0'
+          channel: 'stable'
+      
+      - name: Install dependencies
+        run: flutter pub get
+      
+      - name: Test
+        run: flutter test
+      
+      # iOS Debug Build
+      - name: Build iOS Debug
+        if: ${{ inputs.build_type == 'debug' }}
+        run: flutter build ios --debug --no-codesign
+      
+      # iOS Release Build
+      - name: Build iOS Release
+        if: ${{ inputs.build_type == 'release' }}
+        run: flutter build ios --release --no-codesign
+      
+      # Upload iOS Debug Build
+      - name: Upload iOS Debug Build
+        if: ${{ inputs.build_type == 'debug' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-debug-build
+          path: build/ios/iphonesimulator/Runner.app
+      
+      # Upload iOS Release Build
+      - name: Upload iOS Release Build
+        if: ${{ inputs.build_type == 'release' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-release-build
+          path: build/ios/iphoneos/Runner.app
+      
+      # Build Summary
+      - name: Build Summary
+        run: |
+          echo "## 🍎 iOS Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Type**: ${{ inputs.build_type }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Runner**: ${{ runner.os }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📱 Generated Artifacts:" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ inputs.build_type }}" == "debug" ]]; then
+            echo "- ✅ iOS Debug Build (Simulator)" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [[ "${{ inputs.build_type }}" == "release" ]]; then
+            echo "- ✅ iOS Release Build (Device)" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Note**: iOS builds are unsigned. For App Store distribution, additional code signing setup is required."
