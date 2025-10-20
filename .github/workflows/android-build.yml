@@ -1,0 +1,96 @@
+name: Android Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Select build type'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+          - debug
+          - release
+          - both
+
+jobs:
+  android-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.0'
+          channel: 'stable'
+      
+      - name: Install dependencies
+        run: flutter pub get
+      
+      - name: Setup Android Keystore
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          echo '${{ secrets.ANDROID_KEYSTORE_BASE64 }}' | base64 -d > android/keystore/pulip-webapp-release-key.jks
+          echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=keystore/pulip-webapp-release-key.jks" >> android/key.properties
+      
+      - name: Test
+        run: flutter test
+      
+      - name: Build Android Debug APK
+        if: ${{ inputs.build_type == 'debug' || inputs.build_type == 'both' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+        run: flutter build apk --debug
+      
+      - name: Build Android Release APK
+        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+        run: flutter build apk --release
+      
+      - name: Build Android AAB
+        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+        run: flutter build appbundle --release
+      
+      - name: Upload Android Debug APK
+        if: ${{ inputs.build_type == 'debug' || inputs.build_type == 'both' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+      
+      - name: Upload Android Release APK
+        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+      
+      - name: Upload Android AAB
+        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+      
+      - name: Build Summary
+        run: |
+          echo "## 🤖 Android Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Type**: ${{ inputs.build_type || 'auto' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Runner**: ${{ runner.os }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📱 Generated Artifacts:" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ inputs.build_type }}" == "debug" || "${{ inputs.build_type }}" == "both" || "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "- ✅ Android Debug APK" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [[ "${{ inputs.build_type }}" == "release" || "${{ inputs.build_type }}" == "both" || "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "- ✅ Android Release APK (Signed)" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Android Release AAB (Signed)" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Note**: Release builds are signed with the release keystore for production distribution."

@@ -11,6 +11,7 @@ on:
         options:
           - debug
           - release
+          - both
 
 jobs:
   ios-build:
@@ -30,33 +31,28 @@ jobs:
       - name: Test
         run: flutter test
       
-      # iOS Debug Build
       - name: Build iOS Debug
-        if: ${{ inputs.build_type == 'debug' }}
+        if: ${{ inputs.build_type == 'debug' || inputs.build_type == 'both' }}
         run: flutter build ios --debug --no-codesign
       
-      # iOS Release Build
       - name: Build iOS Release
-        if: ${{ inputs.build_type == 'release' }}
+        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' }}
         run: flutter build ios --release --no-codesign
       
-      # Upload iOS Debug Build
       - name: Upload iOS Debug Build
-        if: ${{ inputs.build_type == 'debug' }}
+        if: ${{ inputs.build_type == 'debug' || inputs.build_type == 'both' }}
         uses: actions/upload-artifact@v4
         with:
           name: ios-debug-build
           path: build/ios/iphonesimulator/Runner.app
       
-      # Upload iOS Release Build
       - name: Upload iOS Release Build
-        if: ${{ inputs.build_type == 'release' }}
+        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' }}
         uses: actions/upload-artifact@v4
         with:
           name: ios-release-build
           path: build/ios/iphoneos/Runner.app
       
-      # Build Summary
       - name: Build Summary
         run: |
           echo "## 🍎 iOS Build Summary" >> $GITHUB_STEP_SUMMARY
@@ -64,10 +60,10 @@ jobs:
           echo "- **Runner**: ${{ runner.os }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📱 Generated Artifacts:" >> $GITHUB_STEP_SUMMARY
-          if [[ "${{ inputs.build_type }}" == "debug" ]]; then
+          if [[ "${{ inputs.build_type }}" == "debug" || "${{ inputs.build_type }}" == "both" ]]; then
             echo "- ✅ iOS Debug Build (Simulator)" >> $GITHUB_STEP_SUMMARY
           fi
-          if [[ "${{ inputs.build_type }}" == "release" ]]; then
+          if [[ "${{ inputs.build_type }}" == "release" || "${{ inputs.build_type }}" == "both" ]]; then
             echo "- ✅ iOS Release Build (Device)" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
