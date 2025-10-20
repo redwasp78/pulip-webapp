@@ -3,8 +3,6 @@ name: Android Build
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
     inputs:
       build_type:
@@ -37,7 +35,7 @@ jobs:
           echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > android/app/google-services.json
       
       - name: Setup Android Keystore
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 && (inputs.build_type == 'release' || github.event_name == 'push' || github.event_name == 'pull_request') }}
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
           mkdir -p android/keystore
           echo '${{ secrets.ANDROID_KEYSTORE_BASE64 }}' | base64 -d > android/keystore/pulip-webapp-release-key.jks
@@ -46,40 +44,34 @@ jobs:
           echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
           echo "storeFile=keystore/pulip-webapp-release-key.jks" >> android/key.properties
       
-      - name: Analyze (Skip on failure)
-        run: flutter analyze --no-fatal-infos || echo "Analyze failed, continuing..."
-      
-      - name: Test (Skip on failure)
-        run: flutter test || echo "Test failed, continuing..."
-      
       - name: Build Debug APK
-        if: ${{ inputs.build_type == 'debug' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+        if: ${{ inputs.build_type == 'debug' || github.event_name == 'push' }}
         run: flutter build apk --debug
       
       - name: Build Release APK
-        if: ${{ inputs.build_type == 'release' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+        if: ${{ inputs.build_type == 'release' && secrets.ANDROID_KEYSTORE_BASE64 }}
         run: flutter build apk --release
       
       - name: Build Release AAB
-        if: ${{ inputs.build_type == 'release' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+        if: ${{ inputs.build_type == 'release' && secrets.ANDROID_KEYSTORE_BASE64 }}
         run: flutter build appbundle --release
       
       - name: Upload Debug APK
-        if: ${{ inputs.build_type == 'debug' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+        if: ${{ inputs.build_type == 'debug' || github.event_name == 'push' }}
         uses: actions/upload-artifact@v4
         with:
           name: android-debug-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
       
       - name: Upload Release APK
-        if: ${{ inputs.build_type == 'release' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+        if: ${{ inputs.build_type == 'release' && secrets.ANDROID_KEYSTORE_BASE64 }}
         uses: actions/upload-artifact@v4
         with:
           name: android-release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
       
       - name: Upload Release AAB
-        if: ${{ inputs.build_type == 'release' || github.event_name == 'push' || github.event_name == 'pull_request' }}
+        if: ${{ inputs.build_type == 'release' && secrets.ANDROID_KEYSTORE_BASE64 }}
         uses: actions/upload-artifact@v4
         with:
           name: android-release-aab
@@ -93,12 +85,12 @@ jobs:
           echo "- **Runner**: ${{ runner.os }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📱 Generated Artifacts:" >> $GITHUB_STEP_SUMMARY
-          if [[ "${{ inputs.build_type }}" == "debug" || "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "pull_request" ]]; then
+          if [[ "${{ inputs.build_type }}" == "debug" || "${{ github.event_name }}" == "push" ]]; then
             echo "- ✅ Android Debug APK" >> $GITHUB_STEP_SUMMARY
           fi
-          if [[ "${{ inputs.build_type }}" == "release" || "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "pull_request" ]]; then
+          if [[ "${{ inputs.build_type }}" == "release" && secrets.ANDROID_KEYSTORE_BASE64 ]]; then
             echo "- ✅ Android Release APK (Signed)" >> $GITHUB_STEP_SUMMARY
             echo "- ✅ Android Release AAB (Signed)" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Note**: Release builds are signed with the release keystore for production distribution."
+          echo "**Note**: Release builds require GitHub Secrets for signing."

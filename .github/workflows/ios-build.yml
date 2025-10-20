@@ -6,12 +6,11 @@ on:
       build_type:
         description: 'Select iOS build type'
         required: true
-        default: 'release'
+        default: 'debug'
         type: choice
         options:
           - debug
           - release
-          - both
 
 jobs:
   ios-build:
@@ -28,29 +27,18 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       
-      - name: Test
-        run: flutter test
+      - name: Setup Firebase for iOS
+        if: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}
+        run: |
+          echo '${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}' | base64 -d > ios/Runner/GoogleService-Info.plist
       
-      - name: Build iOS Debug
-        if: ${{ inputs.build_type == 'debug' || inputs.build_type == 'both' }}
-        run: flutter build ios --debug --no-codesign
+      - name: Build iOS
+        run: flutter build ios --${{ inputs.build_type }} --no-codesign
       
-      - name: Build iOS Release
-        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' }}
-        run: flutter build ios --release --no-codesign
-      
-      - name: Upload iOS Debug Build
-        if: ${{ inputs.build_type == 'debug' || inputs.build_type == 'both' }}
+      - name: Upload iOS Build
         uses: actions/upload-artifact@v4
         with:
-          name: ios-debug-build
-          path: build/ios/iphonesimulator/Runner.app
-      
-      - name: Upload iOS Release Build
-        if: ${{ inputs.build_type == 'release' || inputs.build_type == 'both' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-release-build
+          name: ios-${{ inputs.build_type }}-build
           path: build/ios/iphoneos/Runner.app
       
       - name: Build Summary
@@ -60,11 +48,6 @@ jobs:
           echo "- **Runner**: ${{ runner.os }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📱 Generated Artifacts:" >> $GITHUB_STEP_SUMMARY
-          if [[ "${{ inputs.build_type }}" == "debug" || "${{ inputs.build_type }}" == "both" ]]; then
-            echo "- ✅ iOS Debug Build (Simulator)" >> $GITHUB_STEP_SUMMARY
-          fi
-          if [[ "${{ inputs.build_type }}" == "release" || "${{ inputs.build_type }}" == "both" ]]; then
-            echo "- ✅ iOS Release Build (Device)" >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "- ✅ iOS ${{ inputs.build_type }} Build" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Note**: iOS builds are unsigned. For App Store distribution, additional code signing setup is required."
