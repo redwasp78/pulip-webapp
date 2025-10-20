@@ -14,15 +14,20 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
+          flutter-version: '3.35.4'
           channel: 'stable'
       
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          flutter pub upgrade
       
       - name: Flutter Doctor
         run: flutter doctor -v
       
+      - name: Clean previous builds
+        run: flutter clean
+        
       - name: Build Debug APK
         run: |
           mkdir -p build_logs
