@@ -19,13 +19,11 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.35.4'
+          flutter-version: '3.24.0'
           channel: 'stable'
       
       - name: Install dependencies
-        run: |
-          flutter pub get
-          flutter pub upgrade
+        run: flutter pub get
       
       - name: Flutter Doctor
         run: flutter doctor -v
