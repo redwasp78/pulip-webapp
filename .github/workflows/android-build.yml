@@ -28,12 +28,39 @@ jobs:
           mkdir -p build_logs
           echo "Starting Flutter debug build with verbose logs..."
           flutter build apk --debug -v 2>&1 | tee build_logs/flutter_build_debug.log
+
+      - name: Inspect build outputs
+        id: inspect_build_outputs
+        if: always()
+        run: |
+          echo "Listing build/app/outputs..."
+          ls -R build/app/outputs || true
+          echo "Resolving APK path..."
+          APK_PATH=""
+          # Common Flutter output
+          if ls build/app/outputs/flutter-apk/*.apk >/dev/null 2>&1; then
+            APK_PATH=$(ls -1 build/app/outputs/flutter-apk/*.apk | head -n1)
+          # Gradle vanilla output
+          elif ls build/app/outputs/apk/debug/*.apk >/dev/null 2>&1; then
+            APK_PATH=$(ls -1 build/app/outputs/apk/debug/*.apk | head -n1)
+          # Fallback: any apk under build/**/outputs/**
+          elif ls build/**/outputs/**/*.apk >/dev/null 2>&1; then
+            APK_PATH=$(ls -1 build/**/outputs/**/*.apk | head -n1)
+          fi
+          echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
+          echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
+          if [ -z "$APK_PATH" ]; then
+            echo "No APK found in common locations.";
+          else
+            echo "Found APK: $APK_PATH";
+          fi
       
       - name: Upload Debug APK
+        if: ${{ steps.inspect_build_outputs.outputs.apk_path != '' || env.APK_PATH != '' }}
         uses: actions/upload-artifact@v4
         with:
           name: android-debug-apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          path: ${{ steps.inspect_build_outputs.outputs.apk_path || env.APK_PATH }}
       
       - name: Upload Debug Logs (on failure)
         if: failure()
