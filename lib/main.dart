@@ -19,7 +19,7 @@ void main() async {
   try {
     await Firebase.initializeApp();
     print('Firebase 초기화 성공');
-    
+
     // FCM 서비스 초기화
     try {
       await FCMService.initialize();
@@ -29,9 +29,8 @@ void main() async {
     }
   } catch (e) {
     print('Firebase 초기화 실패: $e - 앱은 Firebase 없이 정상 작동합니다');
-    // Firebase 없이도 앱은 정상 작동
   }
-  
+
   runApp(const PulipWebApp());
 }
 
