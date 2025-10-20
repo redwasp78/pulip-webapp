@@ -54,6 +54,14 @@ jobs:
           else
             echo "Found APK: $APK_PATH";
           fi
+
+      - name: Fail if APK not found
+        if: always()
+        run: |
+          if [ -z "${{ steps.inspect_build_outputs.outputs.apk_path }}" ] && [ -z "${{ env.APK_PATH }}" ]; then
+            echo "APK was not generated. Failing the job to surface logs.";
+            exit 1
+          fi
       
       - name: Upload Debug APK
         if: ${{ steps.inspect_build_outputs.outputs.apk_path != '' || env.APK_PATH != '' }}
@@ -62,8 +70,8 @@ jobs:
           name: android-debug-apk
           path: ${{ steps.inspect_build_outputs.outputs.apk_path || env.APK_PATH }}
       
-      - name: Upload Debug Logs (on failure)
-        if: failure()
+      - name: Upload Debug Logs (always)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: android-debug-logs
