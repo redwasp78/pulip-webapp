@@ -20,11 +20,6 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       
-      - name: Setup Firebase for Android
-        run: |
-          echo "Firebase file already exists in project - no setup needed"
-          ls -la android/app/google-services.json
-      
       - name: Build Debug APK
         run: flutter build apk --debug
       
