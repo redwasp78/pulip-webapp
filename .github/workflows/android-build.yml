@@ -24,7 +24,10 @@ jobs:
         run: flutter doctor -v
       
       - name: Build Debug APK
-        run: flutter build apk --debug
+        run: |
+          mkdir -p build_logs
+          echo "Starting Flutter debug build with verbose logs..."
+          flutter build apk --debug -v 2>&1 | tee build_logs/flutter_build_debug.log
       
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
@@ -32,8 +35,30 @@ jobs:
           name: android-debug-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
       
+      - name: Upload Debug Logs (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-debug-logs
+          path: |
+            build_logs/**
+            ~/.gradle/daemon/**/*
+            android/app/build/outputs/logs/**
+            android/build/reports/**
+
+      - name: Build Failure Summary (tail logs)
+        if: failure()
+        run: |
+          echo "## ❌ Android Build Failed" >> $GITHUB_STEP_SUMMARY
+          echo "### 📄 Last 200 lines of flutter_build_debug.log" >> $GITHUB_STEP_SUMMARY
+          tail -n 200 build_logs/flutter_build_debug.log >> $GITHUB_STEP_SUMMARY
+
       - name: Build Summary
         run: |
           echo "## 🤖 Android Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- **Status**: ✅ Success" >> $GITHUB_STEP_SUMMARY
-          echo "- **Generated**: Android Debug APK" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ job.status }}" == "success" ]]; then
+            echo "- **Generated**: Android Debug APK" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Logs**: Attached as artifacts (android-debug-logs)" >> $GITHUB_STEP_SUMMARY
+          fi
