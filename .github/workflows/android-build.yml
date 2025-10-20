@@ -3,6 +3,11 @@ name: Android Build
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'android/**'
+      - 'lib/**'
+      - 'pubspec.yaml'
+      - '.github/workflows/android-build.yml'
   workflow_dispatch:
 
 jobs:
