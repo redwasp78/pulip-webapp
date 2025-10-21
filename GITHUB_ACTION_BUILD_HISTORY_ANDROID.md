@@ -16,7 +16,7 @@
 | #5 | 11bcc7f | Flutter 3.16.9 + Firebase 2.24.2/14.7.10 + Kotlin 1.9.10 + Java 11 | ❌ 실패 | Flutter 3.16.9와 Firebase 2.24.2 호환성 문제 |
 | #6 | 83c1f63 | Flutter 3.24.0 + Firebase 9.6.1 (존재하지 않는 버전) | ❌ 실패 | Firebase 9.6.1 버전이 존재하지 않음 - 의존성 해결 실패 |
 | #7 | 59f3ac4 | Flutter 3.24.0 + Firebase 3.15.2/15.2.10 (수정된 버전) | ❌ 실패 | google-services.json 파일 누락 - Firebase 설정 파일 필요 |
-| #8 | *진행중* | Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets | 🔄 진행중 | GitHub Secrets로 google-services.json 파일 제공 |
+| #8 | 7995d14 | Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets | ❌ 실패 | Firebase 패키지 설치 실패 - GitHub Secrets 미설정 또는 잘못된 설정 |
 
 ---
 
@@ -63,11 +63,12 @@
 - **원인**: google-services.json 파일이 GitHub Actions 환경에 없음
 - **중요성**: Firebase 설정 파일이 .gitignore에 의해 제외되어 빌드 실패
 
-### **시도 #8: GitHub Secrets 사용**
-- **커밋**: *진행중* (GitHub Secrets로 Firebase 설정 파일 제공)
+### **실패 #8: Firebase 패키지 설치 실패**
+- **커밋**: 7995d14 (GitHub Secrets로 Firebase 설정 파일 제공)
 - **설정**: Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets
-- **상태**: 🔄 GitHub Actions 빌드 진행 중
-- **근거**: GitHub Secrets를 사용하여 google-services.json 파일을 안전하게 제공
+- **GitHub Actions 오류**: `Error: Couldn't resolve the package 'firebase_core' in 'package:firebase_core/firebase_core.dart'`
+- **원인**: Firebase 패키지가 다운로드되지 않음 - GitHub Secrets 미설정 또는 잘못된 설정
+- **중요성**: GitHub Secrets 설정이 제대로 되지 않아 Firebase 패키지 설치 실패
 
 ---
 
@@ -82,7 +83,7 @@
 - **워크플로우**: Android Build
 - **러너**: macos-latest
 - **현재 설정**: Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets
-- **상태**: 🔄 8번째 시도 진행 중 (7회 실패 후 GitHub Secrets로 Firebase 설정 파일 제공)
+- **상태**: ❌ 8번째 시도도 실패 (8회 연속 실패 - Firebase 패키지 설치 문제)
 - **문제점**: Flutter-Firebase 버전 호환성 문제가 지속적으로 발생
 
 ---
@@ -93,8 +94,8 @@
 |------|------|
 | 총 시도 | 8 |
 | 성공 | 0 |
-| 실패 | 7 |
-| 진행 중 | 1 |
+| 실패 | 8 |
+| 진행 중 | 0 |
 | 성공률 | 0% |
 
 ---
