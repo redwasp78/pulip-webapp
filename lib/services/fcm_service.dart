@@ -1,50 +1,44 @@
 import 'dart:async';
 import 'dart:io';
-// import 'package:firebase_core/firebase_core.dart';
-// import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-// import 'package:device_info_plus/device_info_plus.dart';
 
 /// Firebase Cloud Messaging 서비스
 ///
 /// 푸시 알림의 초기화, 토큰 관리, 메시지 처리를 담당합니다.
 /// 백그라운드 및 포그라운드 알림을 모두 지원합니다.
 class FCMService {
-  // static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   static String? _fcmToken;
-  // static StreamSubscription<RemoteMessage>? _messageSubscription;
+  static StreamSubscription<RemoteMessage>? _messageSubscription;
 
   /// FCM 서비스 초기화
   static Future<void> initialize() async {
     try {
-      // Firebase 관련 기능 임시 비활성화
-      if (kDebugMode) {
-        print('FCM Service temporarily disabled for build compatibility');
-      }
-      
       // Firebase가 초기화되었는지 확인
-      // if (Firebase.apps.isEmpty) {
-      //   throw Exception('Firebase not initialized');
-      // }
+      if (Firebase.apps.isEmpty) {
+        throw Exception('Firebase not initialized');
+      }
 
-      // // 알림 권한 요청
-      // await _requestPermission();
+      // 알림 권한 요청
+      await _requestPermission();
 
-      // // FCM 토큰 가져오기
-      // await _getFCMToken();
+      // FCM 토큰 가져오기
+      await _getFCMToken();
 
-      // // 포그라운드 메시지 리스너 설정
-      // _setupForegroundMessageListener();
+      // 포그라운드 메시지 리스너 설정
+      _setupForegroundMessageListener();
 
-      // // 백그라운드 메시지 핸들러 설정
-      // FirebaseMessaging.onBackgroundMessage(
-      //     _firebaseMessagingBackgroundHandler);
+      // 백그라운드 메시지 핸들러 설정
+      FirebaseMessaging.onBackgroundMessage(
+          _firebaseMessagingBackgroundHandler);
 
-      // // 알림 클릭 시 앱 열기 처리
-      // _handleNotificationTap();
+      // 알림 클릭 시 앱 열기 처리
+      _handleNotificationTap();
 
       if (kDebugMode) {
-        print('FCM Service initialized successfully (disabled)');
+        print('FCM Service initialized successfully');
         print('FCM Token: $_fcmToken');
       }
     } catch (e) {
@@ -206,9 +200,9 @@ class FCMService {
 
   /// 서비스 정리
   static void dispose() {
-    // _messageSubscription?.cancel();
+    _messageSubscription?.cancel();
     if (kDebugMode) {
-      print('FCM Service disposed (Firebase temporarily disabled)');
+      print('FCM Service disposed');
     }
   }
 }
@@ -216,19 +210,14 @@ class FCMService {
 /// 백그라운드 메시지 핸들러
 /// 앱이 백그라운드에 있을 때 호출됩니다.
 @pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(dynamic message) async {
-  // Firebase 기능 임시 비활성화
-  if (kDebugMode) {
-    print('Background message handler disabled (Firebase temporarily disabled)');
-  }
-  
-  // // Firebase 초기화
-  // await Firebase.initializeApp();
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Firebase 초기화
+  await Firebase.initializeApp();
 
-  // if (kDebugMode) {
-  //   print('Handling background message: ${message.messageId}');
-  //   print('Title: ${message.notification?.title}');
-  //   print('Body: ${message.notification?.body}');
-  //   print('Data: ${message.data}');
-  // }
+  if (kDebugMode) {
+    print('Handling background message: ${message.messageId}');
+    print('Title: ${message.notification?.title}');
+    print('Body: ${message.notification?.body}');
+    print('Data: ${message.data}');
+  }
 }
