@@ -12,14 +12,14 @@ on:
 
 jobs:
   android-build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.9'
+          flutter-version: '3.35.4'
           channel: 'stable'
       
       - name: Install dependencies
