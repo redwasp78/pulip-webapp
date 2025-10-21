@@ -53,11 +53,27 @@ jobs:
       - name: Build iOS
         run: flutter build ios --${{ inputs.build_type || 'debug' }} --no-codesign
       
-      - name: Upload iOS Build
+      - name: Create IPA from .app bundle
+        if: inputs.build_type == 'release' || github.event.inputs.build_type == 'release'
+        run: |
+          mkdir -p build/ios/ipa
+          cd build/ios/iphoneos
+          zip -r ../../ipa/Runner.app.zip Runner.app
+          mv ../../ipa/Runner.app.zip ../../ipa/Runner.ipa
+          echo "IPA created: build/ios/ipa/Runner.ipa"
+      
+      - name: Upload iOS Build (.app)
         uses: actions/upload-artifact@v4
         with:
-          name: ios-${{ inputs.build_type || 'debug' }}-build
+          name: ios-${{ inputs.build_type || 'debug' }}-app
           path: build/ios/iphoneos/Runner.app
+      
+      - name: Upload iOS Build (.ipa)
+        if: inputs.build_type == 'release' || github.event.inputs.build_type == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-${{ inputs.build_type || 'debug' }}-ipa
+          path: build/ios/ipa/Runner.ipa
       
       - name: Build Summary
         run: |
@@ -66,6 +82,9 @@ jobs:
           echo "- **Runner**: ${{ runner.os }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📱 Generated Artifacts:" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ iOS ${{ inputs.build_type || 'debug' }} Build" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ iOS ${{ inputs.build_type || 'debug' }} App Bundle (.app)" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ inputs.build_type || 'debug' }}" == "release" ]]; then
+            echo "- ✅ iOS ${{ inputs.build_type || 'debug' }} IPA Package (.ipa)" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Note**: iOS builds are unsigned. For App Store distribution, additional code signing setup is required."
