@@ -66,17 +66,17 @@ jobs:
       - name: Clean previous builds
         run: flutter clean
         
-      - name: Build Debug APK
-        run: flutter build apk --debug
+      - name: Build Release APK
+        run: flutter build apk --release
 
-      - name: Upload Debug APK
+      - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
-          name: android-debug-apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          name: android-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
       
       - name: Build Summary
         run: |
           echo "## 🤖 Android Build Summary" >> $GITHUB_STEP_SUMMARY
           echo "- **Status**: Success" >> $GITHUB_STEP_SUMMARY
-          echo "- **Generated**: Android Debug APK" >> $GITHUB_STEP_SUMMARY
+          echo "- **Generated**: Android Release APK" >> $GITHUB_STEP_SUMMARY
