@@ -1,6 +1,8 @@
 # 🔧 빌드 히스토리 및 실패 경험 기록
 
-## ⚠️ **실패한 설정들**
+## 📱 **Android Build 워크플로우**
+
+### ⚠️ **Android 빌드 실패한 설정들**
 
 ### Flutter 3.35.4 + Firebase 4.2.0
 - **날짜**: 2024년 (여러 번 시도)
@@ -42,29 +44,51 @@
   - 로컬 빌드 테스트 성공 (21.8초)
 - **결론**: 버전 문제가 아닌 환경 차이 문제로 판단
 
-## ✅ **성공하는 안정 설정**
+### ✅ **Android 빌드 성공하는 안정 설정**
 
-### 현재 안정 설정
-- **Flutter**: 3.24.0 (안정적)
+### 현재 Android 빌드 안정 설정
+- **러너**: macos-latest (Ubuntu에서 실패하여 변경)
+- **Flutter**: 3.35.4 (로컬과 동일)
 - **Firebase Core**: 3.15.2
 - **Firebase Messaging**: 15.2.10
 - **Java**: 8
 - **Kotlin JVM Target**: 1.8
 
-### 테스트 결과
-- ✅ 로컬 빌드 성공
+### Android 빌드 테스트 결과
+- ✅ 로컬 빌드 성공 (macOS)
 - ✅ Android APK 생성 성공
+- ✅ Firebase 기능 정상 작동
+- 🔄 GitHub Actions 테스트 중 (macOS 러너)
+
+## 🍎 **iOS Build 워크플로우**
+
+### ✅ **iOS 빌드 성공하는 안정 설정**
+- **러너**: macos-latest (원래부터)
+- **Flutter**: 3.24.0 (안정적)
+- **Firebase Core**: 3.15.2
+- **Firebase Messaging**: 15.2.10
+- **빌드 결과**: .app 번들 + .ipa 파일 생성
+
+### iOS 빌드 테스트 결과
+- ✅ GitHub Actions 빌드 성공
+- ✅ iOS .app 번들 생성 성공
+- ✅ iOS .ipa 파일 생성 성공 (Release 빌드 시)
 - ✅ Firebase 기능 정상 작동
 
 ## 🚫 **시도하지 말아야 할 조합**
 
+### Android 빌드
 1. **Flutter 3.35.4 + Firebase 4.2.0** - 호환성 문제
 2. **Flutter 3.24.0 + Java 11** - 버전 불일치
 3. **Firebase 16.0.3 + Flutter 3.24.0** - 버전 불일치
 4. **Flutter 3.19.6 + 단순화된 워크플로우** - 여전히 실패
 5. **Flutter 3.16.9 + Firebase 2.32.0/14.7.10** - 환경 차이로 실패
-6. **복잡한 Gradle 설정** - 오히려 문제 야기
-7. **타임아웃 및 verbose 로깅** - 빌드 과정 방해
+6. **Ubuntu 러너** - 환경 차이로 인한 빌드 실패
+7. **복잡한 Gradle 설정** - 오히려 문제 야기
+8. **타임아웃 및 verbose 로깅** - 빌드 과정 방해
+
+### iOS 빌드
+- **현재까지 실패 없음** - macOS 러너에서 안정적
 
 ## 📋 **업그레이드 가이드**
 
