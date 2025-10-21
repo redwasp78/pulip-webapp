@@ -17,7 +17,8 @@
 | #6 | 83c1f63 | Flutter 3.24.0 + Firebase 9.6.1 (존재하지 않는 버전) | ❌ 실패 | Firebase 9.6.1 버전이 존재하지 않음 - 의존성 해결 실패 |
 | #7 | 59f3ac4 | Flutter 3.24.0 + Firebase 3.15.2/15.2.10 (수정된 버전) | ❌ 실패 | google-services.json 파일 누락 - Firebase 설정 파일 필요 |
 | #8 | 7995d14 | Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets | ❌ 실패 | Firebase 패키지 설치 실패 - GitHub Secrets 미설정 또는 잘못된 설정 |
-| #9 | 60a9572 | Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets (재시도) | 🔄 진행중 | GitHub Secrets 설정 완료 후 재시도 |
+| #9 | 60a9572 | Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets (재시도) | ❌ 실패 | Firebase 타입 오류 - FCM 서비스 코드에서 Firebase import 누락 |
+| #10 | *진행중* | Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets + Firebase import 수정 | 🔄 진행중 | Firebase import 추가 후 재시도 |
 
 ---
 
@@ -71,11 +72,18 @@
 - **원인**: Firebase 패키지가 다운로드되지 않음 - GitHub Secrets 미설정 또는 잘못된 설정
 - **중요성**: GitHub Secrets 설정이 제대로 되지 않아 Firebase 패키지 설치 실패
 
-### **시도 #9: GitHub Secrets 재시도**
+### **실패 #9: Firebase 타입 오류**
 - **커밋**: 60a9572 (Firebase 복원 후 GitHub Secrets 재시도)
 - **설정**: Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets
+- **GitHub Actions 오류**: `Type 'RemoteMessage' not found`, `Undefined name 'Firebase'`, `Undefined name 'FirebaseMessaging'`
+- **원인**: FCM 서비스 코드에서 Firebase import가 주석 처리되어 있음
+- **중요성**: Firebase 패키지는 설치되었지만 코드에서 Firebase 타입을 찾을 수 없음
+
+### **시도 #10: Firebase import 수정**
+- **커밋**: *진행중* (Firebase import 추가 후 재시도)
+- **설정**: Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets + Firebase import 수정
 - **상태**: 🔄 GitHub Actions 빌드 진행 중
-- **근거**: GitHub Secrets 설정 완료 후 Firebase 패키지 설치 및 빌드 재시도
+- **근거**: FCM 서비스 코드에 Firebase import 추가하여 타입 오류 해결
 
 ---
 
@@ -89,8 +97,8 @@
 
 - **워크플로우**: Android Build
 - **러너**: macos-latest
-- **현재 설정**: Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets
-- **상태**: 🔄 9번째 시도 진행 중 (8회 실패 후 GitHub Secrets 설정 완료로 재시도)
+- **현재 설정**: Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets + Firebase import 수정
+- **상태**: 🔄 10번째 시도 진행 중 (9회 실패 후 Firebase import 수정으로 재시도)
 - **문제점**: Flutter-Firebase 버전 호환성 문제가 지속적으로 발생
 
 ---
@@ -99,9 +107,9 @@
 
 | 항목 | 개수 |
 |------|------|
-| 총 시도 | 9 |
+| 총 시도 | 10 |
 | 성공 | 0 |
-| 실패 | 8 |
+| 실패 | 9 |
 | 진행 중 | 1 |
 | 성공률 | 0% |
 
