@@ -103,10 +103,38 @@
 - **Gradle 빌드 실패**: Flutter-Firebase 조합이 Gradle 빌드 과정에서 실패
 - **버전 호환성**: Flutter와 Firebase 간 근본적인 호환성 문제
 
-### **다음 시도 방향**
-- **Firebase 제거**: Firebase 없이 Flutter만으로 빌드 시도
-- **더 낮은 Flutter 버전**: 3.13.x 또는 3.10.x 시도
-- **Firebase 대체**: 다른 푸시 알림 서비스 사용 고려
+### **웹 검색 기반 해결책**
+
+#### **1. Firebase 제거 후 빌드 시도**
+- **방법**: `pubspec.yaml`에서 Firebase 의존성 제거
+- **목적**: Firebase 없이 Flutter 앱이 정상 빌드되는지 확인
+- **장점**: 근본 원인 파악 가능
+
+#### **2. FlutterFire CLI 사용**
+- **방법**: `flutterfire configure` 명령어로 Firebase 재설정
+- **목적**: 자동으로 호환되는 버전 조합 찾기
+- **장점**: 공식 도구로 호환성 보장
+
+#### **3. 더 낮은 Flutter 버전 시도**
+- **Flutter 3.13.x**: 2023년 안정 버전
+- **Flutter 3.10.x**: 2023년 초 안정 버전
+- **목적**: Firebase와 호환되는 오래된 Flutter 버전 찾기
+
+#### **4. Firebase 대체 솔루션**
+- **OneSignal**: 푸시 알림 서비스
+- **FCM 직접 구현**: Firebase 없이 FCM 사용
+- **로컬 알림**: Flutter Local Notifications 사용
+
+#### **5. Gradle 설정 최적화**
+- **JVM 인수**: `-Xmx4g -XX:MaxMetaspaceSize=1g`
+- **Gradle 데몬**: 비활성화
+- **캐시 설정**: 빌드 캐시 최적화
+
+### **권장 해결 순서**
+1. **Firebase 제거 테스트** (근본 원인 파악)
+2. **FlutterFire CLI 재설정** (자동 호환성)
+3. **더 낮은 Flutter 버전** (3.13.x 시도)
+4. **Firebase 대체 솔루션** (OneSignal 등)
 
 ---
 
