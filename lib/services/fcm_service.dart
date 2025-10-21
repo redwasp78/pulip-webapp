@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
 /// Firebase Cloud Messaging 서비스
@@ -9,9 +9,9 @@ import 'package:flutter/foundation.dart';
 /// 푸시 알림의 초기화, 토큰 관리, 메시지 처리를 담당합니다.
 /// 백그라운드 및 포그라운드 알림을 모두 지원합니다.
 class FCMService {
-  static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  // static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   static String? _fcmToken;
-  static StreamSubscription<RemoteMessage>? _messageSubscription;
+  // static StreamSubscription<RemoteMessage>? _messageSubscription;
 
   /// FCM 서비스 초기화
   static Future<void> initialize() async {

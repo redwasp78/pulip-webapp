@@ -28,6 +28,11 @@ jobs:
       - name: Flutter Doctor
         run: flutter doctor -v
       
+      - name: Setup Firebase configuration
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > android/app/google-services.json
+          echo "✅ Google Services JSON file created from GitHub Secrets"
+      
       - name: Clean previous builds
         run: flutter clean
         
