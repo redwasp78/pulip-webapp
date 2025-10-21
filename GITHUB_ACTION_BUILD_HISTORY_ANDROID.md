@@ -20,7 +20,8 @@
 | #9 | 60a9572 | Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets (재시도) | ❌ 실패 | Firebase 타입 오류 - FCM 서비스 코드에서 Firebase import 누락 |
 | #10 | ce5ee2f | Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets + Firebase import 수정 | ❌ 실패 | FCM 서비스 코드 오류 - _messageSubscription 변수 누락 |
 | #11 | c60adc4 | Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets + FCM 서비스 코드 수정 | ❌ 실패 | GitHub Secrets JSON 형식 오류 - google-services.json 파싱 실패 |
-| #12 | *진행중* | Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets JSON 수정 | 🔄 진행중 | 올바른 JSON 형식으로 GitHub Secrets 재설정 |
+| #12 | d41dd2d | Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets JSON 수정 | ❌ 실패 | GitHub Secrets JSON 형식 오류 지속 - 여전히 MalformedJsonException |
+| #13 | *진행중* | Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + 워크플로우 직접 JSON 생성 | 🔄 진행중 | GitHub Secrets 대신 워크플로우에서 JSON 직접 생성 |
 
 ---
 
@@ -95,11 +96,18 @@
 - **원인**: GitHub Secrets에 설정된 JSON 형식이 잘못됨 - google-services.json 파싱 실패
 - **중요성**: 모든 코드 문제는 해결되었지만 GitHub Secrets JSON 형식 오류로 빌드 실패
 
-### **시도 #12: GitHub Secrets JSON 수정**
-- **커밋**: *진행중* (올바른 JSON 형식으로 GitHub Secrets 재설정)
+### **실패 #12: GitHub Secrets JSON 형식 오류 지속**
+- **커밋**: d41dd2d (올바른 JSON 형식으로 GitHub Secrets 재설정)
 - **설정**: Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets JSON 수정
+- **GitHub Actions 오류**: `MalformedJsonException: Unterminated object at line 10 column 29`
+- **원인**: GitHub Secrets JSON 형식 오류가 지속적으로 발생 - 복사/붙여넣기 과정에서 문제
+- **중요성**: GitHub Secrets 방식으로는 JSON 형식 문제를 해결하기 어려움
+
+### **시도 #13: 워크플로우 직접 JSON 생성**
+- **커밋**: *진행중* (GitHub Secrets 대신 워크플로우에서 JSON 직접 생성)
+- **설정**: Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + 워크플로우 직접 JSON 생성
 - **상태**: 🔄 GitHub Actions 빌드 진행 중
-- **근거**: 올바른 JSON 형식으로 GitHub Secrets를 재설정하여 google-services.json 파싱 오류 해결
+- **근거**: GitHub Secrets 대신 워크플로우에서 JSON을 직접 생성하여 형식 오류 해결
 
 ---
 
@@ -113,8 +121,8 @@
 
 - **워크플로우**: Android Build
 - **러너**: macos-latest
-- **현재 설정**: Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + GitHub Secrets JSON 수정
-- **상태**: 🔄 12번째 시도 진행 중 (11회 실패 후 GitHub Secrets JSON 형식 수정으로 재시도)
+- **현재 설정**: Flutter 3.24.0 + Firebase 3.15.2/15.2.10 + 워크플로우 직접 JSON 생성
+- **상태**: 🔄 13번째 시도 진행 중 (12회 실패 후 워크플로우에서 JSON 직접 생성으로 재시도)
 - **문제점**: Flutter-Firebase 버전 호환성 문제가 지속적으로 발생
 
 ---
@@ -123,9 +131,9 @@
 
 | 항목 | 개수 |
 |------|------|
-| 총 시도 | 12 |
+| 총 시도 | 13 |
 | 성공 | 0 |
-| 실패 | 11 |
+| 실패 | 12 |
 | 진행 중 | 1 |
 | 성공률 | 0% |
 

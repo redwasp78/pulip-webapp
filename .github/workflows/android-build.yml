@@ -30,8 +30,38 @@ jobs:
       
       - name: Setup Firebase configuration
         run: |
-          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > android/app/google-services.json
-          echo "✅ Google Services JSON file created from GitHub Secrets"
+          cat > android/app/google-services.json << 'EOF'
+          {
+            "project_info": {
+              "project_number": "75347309921",
+              "project_id": "webapp-190a2",
+              "storage_bucket": "webapp-190a2.firebasestorage.app"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:75347309921:android:627a5ecfc84e0d7928c120",
+                  "android_client_info": {
+                    "package_name": "kr.pe.kk.pulip_webapp"
+                  }
+                },
+                "oauth_client": [],
+                "api_key": [
+                  {
+                    "current_key": "AIzaSyDX05UZVSNtCwikaCBTm33Mm_dd01PDX-o"
+                  }
+                ],
+                "services": {
+                  "appinvite_service": {
+                    "other_platform_oauth_client": []
+                  }
+                }
+              }
+            ],
+            "configuration_version": "1"
+          }
+          EOF
+          echo "✅ Google Services JSON file created directly"
       
       - name: Clean previous builds
         run: flutter clean
