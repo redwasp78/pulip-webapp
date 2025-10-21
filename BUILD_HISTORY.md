@@ -13,18 +13,7 @@
 
 ### ✅ **Android 빌드 성공 기록**
 
-#### 2024년 12월 - 로컬 Android 빌드 성공
-- **날짜**: 2024년 12월
-- **설정**: 
-  - Flutter: 3.35.4
-  - Firebase Core: 3.15.2
-  - Firebase Messaging: 15.2.10
-  - Java: 21 (OpenJDK)
-  - 러너: macOS 26.0.1 (로컬)
-- **빌드 결과**: ✅ Android Debug APK 생성 성공
-- **빌드 시간**: 23.5초
-- **경고**: Java 8 소스/타겟이 구식이라는 경고 (기능에는 영향 없음)
-- **테스트 결과**: 로컬 빌드 성공
+*아직 GitHub Actions 성공 기록 없음*
 
 ### 🔄 **Android 빌드 현재 상태**
 - **러너**: macos-latest
@@ -33,7 +22,9 @@
 - **Firebase Messaging**: 15.2.10
 - **Java**: 8
 - **Kotlin JVM Target**: 1.8
-- **상태**: 테스트 대기 중
+- **상태**: 🔄 GitHub Actions 빌드 진행 중 (트리거됨)
+- **트리거 원인**: BUILD_HISTORY.md 변경으로 인한 lib/** 경로 변경
+- **GitHub Actions 결과**: 대기 중
 
 ---
 
@@ -45,19 +36,7 @@
 
 ### ✅ **iOS 빌드 성공 기록**
 
-#### 2024년 12월 - 로컬 iOS 빌드 성공
-- **날짜**: 2024년 12월
-- **설정**:
-  - Flutter: 3.35.4
-  - Firebase Core: 3.15.2
-  - Firebase Messaging: 15.2.10
-  - Xcode: 26.0.1
-  - CocoaPods: 1.16.2
-  - 러너: macOS 26.0.1 (로컬)
-- **빌드 결과**: ✅ iOS .app 번들 생성 성공
-- **빌드 시간**: 43.0초 (Xcode 빌드)
-- **경고**: 코드 서명 비활성화로 인한 배포 제한 (개발용으로는 문제없음)
-- **테스트 결과**: 로컬 빌드 성공
+*아직 GitHub Actions 성공 기록 없음*
 
 ### 🔄 **iOS 빌드 현재 상태**
 - **러너**: macos-latest
@@ -72,8 +51,8 @@
 
 | 워크플로우 | 성공 | 실패 | 현재 상태 |
 |-----------|------|------|-----------|
-| Android   | 1    | 0    | ✅ 로컬 성공 |
-| iOS       | 1    | 0    | ✅ 로컬 성공 |
+| Android   | 0    | 0    | 🔄 GitHub Actions 대기 |
+| iOS       | 0    | 0    | 🔄 GitHub Actions 대기 |
 
 ---
 
