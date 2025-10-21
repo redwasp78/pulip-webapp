@@ -23,7 +23,9 @@ jobs:
           channel: 'stable'
       
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          flutter pub cache repair
       
       - name: Flutter Doctor
         run: flutter doctor -v
@@ -38,8 +40,12 @@ jobs:
           echo "org.gradle.parallel=true" >> ~/.gradle/gradle.properties
           echo "org.gradle.configureondemand=true" >> ~/.gradle/gradle.properties
           echo "org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g" >> ~/.gradle/gradle.properties
+          echo "org.gradle.caching=true" >> ~/.gradle/gradle.properties
           # Java deprecation warning 억제
           echo "android.javaCompile.suppressSourceTargetDeprecationWarning=true" >> android/gradle.properties
+          # 네트워크 타임아웃 설정
+          echo "systemProp.http.connectionTimeout=120000" >> ~/.gradle/gradle.properties
+          echo "systemProp.http.socketTimeout=120000" >> ~/.gradle/gradle.properties
         
       - name: Build Debug APK
         run: |
